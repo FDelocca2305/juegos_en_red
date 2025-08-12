@@ -10,6 +10,7 @@ public class MenuController : MonoBehaviourPunCallbacks
 {
     [Header("UI")]
     [SerializeField] private TMP_InputField codeInput;
+    [SerializeField] private TMP_InputField nicknameInput;
     [SerializeField] private Button createBtn;
     [SerializeField] private Button joinBtn;
     [SerializeField] private Button quitBtn;
@@ -88,6 +89,7 @@ public class MenuController : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         statusText.text = "Room Joined. Loading lobby...";
+        PhotonNetwork.NickName = nicknameInput.text;
         PhotonNetwork.LoadLevel("LobbyScene");
     }
 }
