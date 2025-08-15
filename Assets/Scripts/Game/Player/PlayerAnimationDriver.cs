@@ -9,7 +9,7 @@ public class PlayerAnimationDriver : MonoBehaviourPun, IPunObservable
     [SerializeField] private FirstPersonController fpc;
 
     [Header("Params")]
-    [SerializeField] private float speedLerp = 10f;
+    [SerializeField] private float speedLerp = 0f;
     [SerializeField] private float groundCheckDist = 0.25f;
     [SerializeField] private LayerMask groundMask = ~0;
     

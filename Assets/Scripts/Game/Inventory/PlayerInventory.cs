@@ -1,18 +1,22 @@
 // Scripts/Game/PlayerInventory.cs
+
+using System.Collections;
 using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 [RequireComponent(typeof(PhotonView))]
-public class PlayerInventory : MonoBehaviourPun
+public class PlayerInventory : MonoBehaviourPunCallbacks 
 {
     [Header("Bindings (World/FP Models & Logic)")]
-    [SerializeField] private GameObject detectiveGunGO; // tiene DetectiveGun
-    [SerializeField] private GameObject tempGunGO;      // tiene TempGun
-    [SerializeField] private GameObject assassinKnifeGO;// tiene AssassinMelee
-    [SerializeField] private GameObject flashlightGO;   // tiene Light o PlayerFlashlight
+    [SerializeField] private GameObject detectiveGunGO;
+    [SerializeField] private GameObject tempGunGO;
+    [SerializeField] private GameObject assassinKnifeGO;
+    [SerializeField] private GameObject flashlightGO;
 
     [Header("Temp Gun")]
-    [SerializeField] private int tempGunShotsPerGrant = 1; // un tiro por N lupas
+    [SerializeField] private int tempGunShotsPerGrant = 1;
     private int tempGunShots;
 
     [Header("Input")]
@@ -33,27 +37,106 @@ public class PlayerInventory : MonoBehaviourPun
 
     private void Start()
     {
-        var role = (PlayerRole)(byte)PhotonNetwork.LocalPlayer.CustomProperties[NetKeys.ROLE];
-
-        if (photonView.IsMine)
+        DeactivateAll();
+        StartCoroutine(WaitForRoleAndEquip());
+        if (TryGetRole(photonView.Owner, out var role))
         {
-            switch (role)
+            Debug.Log(role);
+            if (photonView.IsMine)
             {
-                case PlayerRole.Detective:
-                    EquipDetective();
-                    break;
-                case PlayerRole.Assassin:
-                    EquipAssassin();
-                    break;
-                case PlayerRole.Innocent:
-                    EquipNone();
-                    break;
+                switch (role)
+                {
+                    case PlayerRole.Detective:
+                        EquipDetective();
+                        break;
+                    case PlayerRole.Assassin:
+                        EquipAssassin();
+                        break;
+                    case PlayerRole.Innocent:
+                        EquipNone();
+                        break;
+                }
+            }
+            else
+            {
+                DeactivateAll();
             }
         }
-        else
+    }
+    
+    private IEnumerator WaitForRoleAndEquip()
+    {
+        var owner = photonView.Owner;
+        
+        float timeout = 20f;
+        while (timeout > 0f)
         {
-            DeactivateAll();
+            if (owner != null && TryGetRole(owner, out var role))
+            {
+                Debug.Log($"[Inventory] Role listo: {role} (owner #{owner.ActorNumber})");
+
+                if (photonView.IsMine)
+                {
+                    switch (role)
+                    {
+                        case PlayerRole.Detective: EquipDetective(); break;
+                        case PlayerRole.Assassin:  EquipAssassin();  break;
+                        default:                   EquipNone();      break;
+                    }
+                }
+                else
+                {
+                    DeactivateAll();
+                }
+                yield break;
+            }
+
+            timeout -= Time.deltaTime;
+            yield return null;
         }
+
+        Debug.LogWarning("[Inventory] No llegó ROLE a tiempo, quedo en None (se equipará si cambia luego).");
+    }
+    
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
+    {
+        if (targetPlayer != photonView.Owner) return;
+        if (changedProps != null && changedProps.ContainsKey(NetKeys.ROLE))
+        {
+            if (TryGetRole(targetPlayer, out var role))
+            {
+                Debug.Log($"[Inventory] ROLE actualizado: {role}");
+                if (photonView.IsMine)
+                {
+                    switch (role)
+                    {
+                        case PlayerRole.Detective: EquipDetective(); break;
+                        case PlayerRole.Assassin:  EquipAssassin(); break;
+                        default: EquipNone(); break;
+                    }
+                }
+                else
+                {
+                    DeactivateAll();
+                }
+            }
+        }
+    }
+    
+    private bool TryGetRole(Player p, out PlayerRole role)
+    {
+        role = PlayerRole.Innocent;
+
+        if (p == null || p.CustomProperties == null) return false;
+        if (!p.CustomProperties.TryGetValue(NetKeys.ROLE, out var raw)) return false;
+        
+        byte b;
+        if(raw is byte bb) b = bb;
+        else if (raw is int  ii) b = (byte)ii;
+        else b = System.Convert.ToByte(raw);
+
+        role = (PlayerRole)b;
+        return true;
     }
 
     private void Update()
@@ -70,12 +153,9 @@ public class PlayerInventory : MonoBehaviourPun
         }
     }
 
-    // ---------- API pública para otros sistemas ----------
-
     public void GiveTempGun()
     {
         tempGunShots += tempGunShotsPerGrant;
-        // Si no hay un primary válido (detective o temp) equipá temp
         if (photonView.IsMine && (currentVisual != EquipVisual.DetectiveGun))
             EquipTemp();
     }
@@ -88,8 +168,6 @@ public class PlayerInventory : MonoBehaviourPun
             EquipNone();
         }
     }
-
-    // ---------- Equip helpers (solo local invoca, luego RPC para visuales) ----------
 
     private void EquipDetective()
     {
@@ -112,15 +190,18 @@ public class PlayerInventory : MonoBehaviourPun
 
     private void EquipMelee()
     {
-        var role = (PlayerRole)(byte)PhotonNetwork.LocalPlayer.CustomProperties[NetKeys.ROLE];
-        if (role == PlayerRole.Assassin)
+        //var role = (PlayerRole)(byte)PhotonNetwork.LocalPlayer.CustomProperties[NetKeys.ROLE];
+        if (TryGetRole(photonView.Owner, out var role))
         {
-            SetVisualLocal(EquipVisual.AssassinKnife);
-            BroadcastVisual(EquipVisual.AssassinKnife);
-        }
-        else
-        {
-            EquipNone();
+            if (role == PlayerRole.Assassin)
+            {
+                SetVisualLocal(EquipVisual.AssassinKnife);
+                BroadcastVisual(EquipVisual.AssassinKnife);
+            }
+            else
+            {
+                EquipNone();
+            }
         }
     }
 
@@ -132,10 +213,13 @@ public class PlayerInventory : MonoBehaviourPun
 
     private void EquipPrimaryBest()
     {
-        var role = (PlayerRole)(byte)PhotonNetwork.LocalPlayer.CustomProperties[NetKeys.ROLE];
-        if (role == PlayerRole.Detective) { EquipDetective(); return; }
-        if (tempGunShots > 0)             { EquipTemp(); return; }
-        EquipNone();
+        //var role = (PlayerRole)(byte)PhotonNetwork.LocalPlayer.CustomProperties[NetKeys.ROLE];
+        if (TryGetRole(photonView.Owner, out var role))
+        {
+            if (role == PlayerRole.Detective) { EquipDetective(); return; }
+            if (tempGunShots > 0)             { EquipTemp(); return; }
+            EquipNone();
+        }
     }
 
     private void EquipNone()
@@ -143,8 +227,6 @@ public class PlayerInventory : MonoBehaviourPun
         SetVisualLocal(EquipVisual.None);
         BroadcastVisual(EquipVisual.None);
     }
-
-    // ---------- Visual toggling ----------
 
     private void SetVisualLocal(EquipVisual vis, bool turnOnFlashlight = false)
     {
@@ -166,7 +248,6 @@ public class PlayerInventory : MonoBehaviourPun
                 if (flashlightGO)
                 {
                     flashlightGO.SetActive(true);
-                    // Si la linterna tiene script PlayerFlashlight, el toggle real lo lleva ese script.
                     var light = flashlightGO.GetComponentInChildren<Light>(true);
                     if (light) light.enabled = turnOnFlashlight;
                 }
