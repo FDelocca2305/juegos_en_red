@@ -45,6 +45,7 @@ MonoBehaviour:
   - RPC_Claimed
   - RPC_Die
   - RPC_SetVisual
+  - RPC_PlayRemote
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
