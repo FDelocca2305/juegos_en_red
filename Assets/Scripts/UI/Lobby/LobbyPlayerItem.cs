@@ -13,7 +13,7 @@ public class LobbyPlayerItem : MonoBehaviour
     [SerializeField] private Image colorSwatch;
     [SerializeField] private TMP_Text roleText;
 
-    public void SetData(Player p, int seat, Color color, bool ready, bool isMaster)
+    public void SetData(Photon.Realtime.Player p, int seat, Color color, bool ready, bool isMaster)
     {
         nameText.text = $"{p.NickName} ({p.ActorNumber})";
         seatText.text = $"Seat: {seat}";

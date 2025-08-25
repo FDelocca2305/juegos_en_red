@@ -51,7 +51,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             AddOrUpdate(p);
     }
 
-    private void AddOrUpdate(Player p)
+    private void AddOrUpdate(Photon.Realtime.Player p)
     {
         if (!_items.TryGetValue(p.ActorNumber, out var item))
         {
@@ -67,7 +67,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         item.SetData(p, seat, color, ready, p.IsMasterClient);
     }
 
-    private int GetSeatOf(Player p)
+    private int GetSeatOf(Photon.Realtime.Player p)
     {
         var key = NetKeys.SeatKey(p.ActorNumber);
         if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(key, out var v))
@@ -141,14 +141,14 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         PhotonNetwork.LoadLevel("GameScene");
     }
 
-    public override void OnPlayerEnteredRoom(Player newPlayer)
+    public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
         TryAssignSeatForLocalIfMaster();
         AddOrUpdate(newPlayer);
         RefreshUI();
     }
 
-    public override void OnPlayerLeftRoom(Player otherPlayer)
+    public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
         if (_items.TryGetValue(otherPlayer.ActorNumber, out var item))
         {
@@ -158,7 +158,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         RefreshUI();
     }
 
-    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
+    public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, Hashtable changedProps)
     {
         AddOrUpdate(targetPlayer);
         RefreshUI();
@@ -178,7 +178,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         PhotonNetwork.LoadLevel("MenuScene");
     }
 
-    public override void OnMasterClientSwitched(Player newMasterClient)
+    public override void OnMasterClientSwitched(Photon.Realtime.Player newMasterClient)
     {
         TryAssignSeatForLocalIfMaster();
         RefreshUI();

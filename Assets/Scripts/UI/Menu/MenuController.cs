@@ -47,7 +47,7 @@ public class MenuController : MonoBehaviourPunCallbacks
 
         var options = new RoomOptions
         {
-            MaxPlayers = 4,
+            MaxPlayers = 6,
             IsVisible = false,
             CleanupCacheOnLeave = true
         };

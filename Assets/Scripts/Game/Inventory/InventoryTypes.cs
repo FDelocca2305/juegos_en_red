@@ -1,5 +1,3 @@
-public enum InvSlot { Primary = 0, Melee = 1, Utility = 2 }
-
 public enum EquipVisual
 {
     None = 0,

@@ -2,6 +2,7 @@ using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
+using Game.Inventory;
 
 public class TempGunGiver : MonoBehaviour, IOnEventCallback
 {
@@ -12,13 +13,13 @@ public class TempGunGiver : MonoBehaviour, IOnEventCallback
             int targetActor = (int)photonEvent.CustomData;
             if (PhotonNetwork.LocalPlayer.ActorNumber != targetActor) return;
             
-            if (PlayerInventory.Local != null)
+            if (Game.Inventory.PlayerInventory.Local != null)
             {
-                PlayerInventory.Local.GiveTempGun();
+                Game.Inventory.PlayerInventory.Local.GiveTempGun();
                 return;
             }
             
-            foreach (var inv in FindObjectsOfType<PlayerInventory>())
+            foreach (var inv in FindObjectsOfType<Game.Inventory.PlayerInventory>())
                 if (inv.GetComponent<PhotonView>()?.IsMine == true)
                 {
                     inv.GiveTempGun();

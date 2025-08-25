@@ -1,3 +1,4 @@
+using Game.Inventory;
 using Photon.Pun;
 using UnityEngine;
 
@@ -19,7 +20,7 @@ public class TempGun : MonoBehaviourPun
                 hit.collider.GetComponentInParent<IDamageable>()?.ApplyDamage(1, PhotonNetwork.LocalPlayer.ActorNumber);
             }
             
-            GetComponentInParent<PlayerInventory>()?.ConsumeTempGun();
+            GetComponentInParent<Game.Inventory.PlayerInventory>()?.ConsumeTempGun();
         }
     }
 }

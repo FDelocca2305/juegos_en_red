@@ -1,0 +1,1 @@
+public interface ITeamProvider { int TeamId { get; } }

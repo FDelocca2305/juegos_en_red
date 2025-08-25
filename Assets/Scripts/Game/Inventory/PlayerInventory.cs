@@ -1,12 +1,17 @@
 // Scripts/Game/PlayerInventory.cs
 
-using System.Collections;
-using Photon.Pun;
-using Photon.Realtime;
-using UnityEngine;
-using Hashtable = ExitGames.Client.Photon.Hashtable;
 
-[RequireComponent(typeof(PhotonView))]
+
+namespace Game.Inventory
+{
+    
+    using System.Collections;
+    using Photon.Pun;
+    using Photon.Realtime;
+    using UnityEngine;
+    using Hashtable = ExitGames.Client.Photon.Hashtable;
+    
+    [RequireComponent(typeof(PhotonView))]
 public class PlayerInventory : MonoBehaviourPunCallbacks 
 {
     [Header("Bindings (World/FP Models & Logic)")]
@@ -285,3 +290,5 @@ public class PlayerInventory : MonoBehaviourPunCallbacks
         SetVisualLocal((EquipVisual)vis);
     }
 }
+}
+

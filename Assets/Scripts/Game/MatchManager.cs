@@ -3,6 +3,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using ExitGames.Client.Photon;
 using UnityEngine;
+using Game.Inventory;
 
 public class MatchManager : MonoBehaviourPunCallbacks
 {
@@ -44,7 +45,7 @@ public class MatchManager : MonoBehaviourPunCallbacks
             SetRole(players[i], PlayerRole.Innocent);
     }
     
-    private void SetRole(Player p, PlayerRole role)
+    private void SetRole(Photon.Realtime.Player p, PlayerRole role)
     {
         var ht = new Hashtable
         {
