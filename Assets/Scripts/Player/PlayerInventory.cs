@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Photon.Pun;
 using Player;
 using UnityEngine;
 
-public class PlayerInventory : MonoBehaviour, IPlayerInventory
+public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
 {
     [Header("Weapon (slot 0)")]
     [SerializeField] private BaseGun weapon;
@@ -21,6 +22,18 @@ public class PlayerInventory : MonoBehaviour, IPlayerInventory
 
     public event Action OnInventoryChanged;
     public event Action<int> OnSelectionChanged;
+    
+    public override void OnEnable()
+    {
+        if (photonView.IsMine)
+            ServiceLocator.Register<IPlayerInventory>(this);
+    }
+
+    public override void OnDisable()
+    {
+        if (photonView.IsMine)
+            ServiceLocator.Deregister<IPlayerInventory>(this);
+    }
 
     private void Awake()
     {
@@ -104,14 +117,17 @@ public class PlayerInventory : MonoBehaviour, IPlayerInventory
 
     private void Update()
     {
-        float scroll = Input.GetAxisRaw("Mouse ScrollWheel");
-        if (scroll > 0f) SelectNext();
-        else if (scroll < 0f) SelectPrev();
-
-        for (int i = 1; i <= 4; i++)
+        if (photonView.IsMine)
         {
-            if (Input.GetKeyDown((i).ToString()))
-                SelectIndex(i - 1);
+            float scroll = Input.GetAxisRaw("Mouse ScrollWheel");
+            if (scroll > 0f) SelectNext();
+            else if (scroll < 0f) SelectPrev();
+
+            for (int i = 1; i <= 4; i++)
+            {
+                if (Input.GetKeyDown((i).ToString()))
+                    SelectIndex(i - 1);
+            }
         }
     }
 }

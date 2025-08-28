@@ -1,6 +1,7 @@
+using Photon.Pun;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour, IPlayerController
+public class PlayerController : MonoBehaviourPunCallbacks, IPlayerController
 {
     [Header("Camera")]
     [SerializeField] private Transform viewPoint;
@@ -23,29 +24,43 @@ public class PlayerController : MonoBehaviour, IPlayerController
     private Vector3 _movement;
     private CharacterController _characterController;
     private Camera _camera;
+
+    public override void OnEnable()
+    {
+        if (photonView.IsMine)
+            ServiceLocator.Register<IPlayerController>(this);
+    }
+
+    public override void OnDisable()
+    {
+        if (photonView.IsMine)
+            ServiceLocator.Deregister<IPlayerController>(this);
+    }
     
     private void Start()
     {
         _characterController = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         _camera = Camera.main;
-
-        Transform spawnPosition = ServiceLocator.Resolve<ISpawnManager>().GetSpawnPoint();
-        transform.position = spawnPosition.position;
-        transform.rotation = spawnPosition.rotation;
     }
 
     private void Update()
     {
-        CameraMovement();
-        PlayerMovement();
-        CheckFreeingMouse();
+        if (photonView.IsMine)
+        {
+            CameraMovement();
+            PlayerMovement();
+            CheckFreeingMouse();
+        }
     }
 
     private void LateUpdate()
     {
-        _camera.transform.position = viewPoint.position;
-        _camera.transform.rotation = viewPoint.rotation;
+        if (photonView.IsMine)
+        {
+            _camera.transform.position = viewPoint.position;
+            _camera.transform.rotation = viewPoint.rotation;
+        }
     }
 
     private void PlayerMovement()

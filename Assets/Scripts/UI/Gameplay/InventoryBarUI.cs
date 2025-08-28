@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class InventoryBarUI : MonoBehaviour
 {
@@ -9,14 +10,16 @@ public class InventoryBarUI : MonoBehaviour
 
     private void Awake()
     {
-        _inventory = ServiceLocator.Resolve<IPlayerInventory>();
+        StartCoroutine(Bind());
+    }
+    
+    private IEnumerator Bind()
+    {
+        yield return ServiceLocatorUtil.WaitFor<IPlayerInventory>(svc => _inventory = svc);
 
         _inventory.OnInventoryChanged += Refresh;
         _inventory.OnSelectionChanged += SetSelected;
-    }
 
-    private void Start()
-    {
         Refresh();
         SetSelected(_inventory.SelectedIndex);
     }

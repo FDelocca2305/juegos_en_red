@@ -1,18 +1,34 @@
 using System;
+using Photon.Pun;
 using UnityEngine;
 
-public class PlayerShootController : MonoBehaviour, IPlayerShootController
+public class PlayerShootController : MonoBehaviourPunCallbacks, IPlayerShootController
 {
     [SerializeField] private GameObject bulletImpact;
     [SerializeField] private float bulletImpactLifetime = 10f;
     [SerializeField] private float muzzleDisplayTime = 0.05f;
 
+    [Header("PlayerParticles")] 
+    [SerializeField] private GameObject playerImpact;
+    
     private Camera _camera;
     private float _nextShootTime;
     private float _muzzleCounter;
     private IPlayerInventory _playerInventory;
 
     public event Action<int, int> OnAmmoChanged;
+    
+    public override void OnEnable()
+    {
+        if (photonView.IsMine)
+            ServiceLocator.Register<IPlayerShootController>(this);
+    }
+
+    public override void OnDisable()
+    {
+        if (photonView.IsMine)
+            ServiceLocator.Deregister<IPlayerShootController>(this);
+    }
 
     public void SetActualBullets(float quantity)
     {
@@ -32,7 +48,7 @@ public class PlayerShootController : MonoBehaviour, IPlayerShootController
     private void Awake()
     {
         _camera = Camera.main;
-        _playerInventory = ServiceLocator.Resolve<IPlayerInventory>();
+        _playerInventory = GetComponent<IPlayerInventory>() ?? GetComponentInParent<IPlayerInventory>();
         _nextShootTime = 0f;
 
         var gun = _playerInventory.GetSelectedGun;
@@ -41,15 +57,18 @@ public class PlayerShootController : MonoBehaviour, IPlayerShootController
 
     private void Update()
     {
-        var gun = _playerInventory.GetSelectedGun;
-        if (gun.MuzzleFlash.activeInHierarchy)
+        if (photonView.IsMine)
         {
-            _muzzleCounter -= Time.deltaTime;
-            if (_muzzleCounter <= 0) gun.MuzzleFlash.SetActive(false);
-        }
+            var gun = _playerInventory.GetSelectedGun;
+            if (gun.MuzzleFlash.activeInHierarchy)
+            {
+                _muzzleCounter -= Time.deltaTime;
+                if (_muzzleCounter <= 0) gun.MuzzleFlash.SetActive(false);
+            }
         
-        if (_playerInventory.IsWeaponSelected && Input.GetMouseButton(0))
-            TryShoot();
+            if (_playerInventory.IsWeaponSelected && Input.GetMouseButton(0))
+                TryShoot();
+        }
     }
 
     private void TryShoot()
@@ -67,19 +86,39 @@ public class PlayerShootController : MonoBehaviour, IPlayerShootController
     {
         var cam = _camera != null ? _camera : Camera.main;
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-
+        ray.origin = cam.transform.position;
+        
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            var bulletImpactObject = Instantiate(
-                bulletImpact,
-                hit.point + hit.normal * 0.002f,
-                Quaternion.LookRotation(hit.normal, Vector3.up)
-            );
-            Destroy(bulletImpactObject, bulletImpactLifetime);
+            if (hit.collider.gameObject.CompareTag("Player"))
+            {
+                PhotonNetwork.Instantiate(playerImpact.name, hit.point, Quaternion.identity);
+                hit.collider.gameObject.GetPhotonView().RPC("DealDamage", RpcTarget.All, photonView.Owner.NickName);
+            }
+            else
+            {
+                var bulletImpactObject = Instantiate(
+                    bulletImpact,
+                    hit.point + hit.normal * 0.002f,
+                    Quaternion.LookRotation(hit.normal, Vector3.up)
+                );
+                Destroy(bulletImpactObject, bulletImpactLifetime);
+            }
         }
 
         var gun = _playerInventory.GetSelectedGun;
         gun.MuzzleFlash.SetActive(true);
         _muzzleCounter = muzzleDisplayTime;
+    }
+
+    [PunRPC]
+    public void DealDamage(string damager)
+    {
+        TakeDamage();
+    }
+
+    private void TakeDamage()
+    {
+        gameObject.SetActive(false);
     }
 }

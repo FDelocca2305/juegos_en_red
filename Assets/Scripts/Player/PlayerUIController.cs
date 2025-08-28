@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -11,8 +13,14 @@ public class PlayerUIController : MonoBehaviour, IPlayerUIController
 
     private void Awake()
     {
-        _shoot = ServiceLocator.Resolve<IPlayerShootController>();
-        _inventory = ServiceLocator.Resolve<IPlayerInventory>();
+        StartCoroutine(BindServices());
+    }
+    
+    private IEnumerator BindServices()
+    {
+        yield return ServiceLocatorUtil.WaitFor<IPlayerInventory>(svc => _inventory = svc);
+        yield return ServiceLocatorUtil.WaitFor<IPlayerShootController>(svc => _shoot = svc);
+
         _shoot.OnAmmoChanged += HandleAmmoChanged;
         _shoot.OnAmmoChanged += HandleNoAmmoMessage;
 
