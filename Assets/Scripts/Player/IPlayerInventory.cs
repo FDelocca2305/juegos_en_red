@@ -6,7 +6,7 @@ using UnityEngine;
 public interface IPlayerInventory
 {
     BaseGun GetSelectedGun { get; }
-    
+    void SetWeapon(BaseGun newWeapon);
     IReadOnlyList<BaseToolItem> Tools { get; }
     int SelectedIndex { get; }
     bool IsWeaponSelected { get; }

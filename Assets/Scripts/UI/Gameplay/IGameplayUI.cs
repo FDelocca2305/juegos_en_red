@@ -9,5 +9,7 @@ namespace UI.Gameplay
         void ShowObjectives(string[] lines, bool visible);
         
         void ShowRadarTargets(Transform[] targets);
+        void ShowBlind(bool visible, string message = null);
+        void BlindFor(float seconds, string message = null);
     }
 }

@@ -15,6 +15,10 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPlayerController
     [SerializeField] private float gravityMod = 2.5f;
     [SerializeField] private Transform groundCheckPoint;
     [SerializeField] private LayerMask groundLayer;
+
+    [Header("Animator")] 
+    [SerializeField] private Animator animator;
+    [SerializeField] private GameObject playerModel;
     
     private float _verticalRotStore;
     private float _activeMoveSpeed;
@@ -24,6 +28,9 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPlayerController
     private Vector3 _movement;
     private CharacterController _characterController;
     private Camera _camera;
+    
+    private static readonly int Grounded = Animator.StringToHash("grounded");
+    private static readonly int Speed = Animator.StringToHash("speed");
 
     public override void OnEnable()
     {
@@ -42,6 +49,11 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPlayerController
         _characterController = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         _camera = Camera.main;
+
+        if (photonView.IsMine)
+        {
+            playerModel.SetActive(false);
+        }
     }
 
     private void Update()
@@ -81,6 +93,9 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPlayerController
         
         _movement.y += Physics.gravity.y * Time.deltaTime * gravityMod;
         _characterController.Move(_movement * Time.deltaTime);
+        
+        animator.SetBool(Grounded, _isGrounded);
+        animator.SetFloat(Speed, _moveDir.magnitude);
     }
 
     private void JumpCheck()

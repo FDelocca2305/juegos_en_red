@@ -18,7 +18,7 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
     public BaseGun GetSelectedGun => weapon;
     public IReadOnlyList<BaseToolItem> Tools => tools;
     public int SelectedIndex => selectedIndex;
-    public bool IsWeaponSelected => selectedIndex == 0;
+    public bool IsWeaponSelected => selectedIndex == 0 && weapon != null;
 
     public event Action OnInventoryChanged;
     public event Action<int> OnSelectionChanged;
@@ -38,6 +38,10 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
     private void Awake()
     {
         tools.RemoveAll(t => t == null);
+        
+        if (weapon == null && selectedIndex == 0 && tools.Count > 0)
+            selectedIndex = 1;
+
         ApplySelectionVisuals(previousIndex: -1);
         OnInventoryChanged?.Invoke();
         OnSelectionChanged?.Invoke(selectedIndex);
@@ -45,9 +49,14 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
 
     public bool TryAddTool(BaseToolItem tool)
     {
-        if (tool == null || tools.Count >= 3) return false;
+        if (tool == null) return false;
+        if (tools.Contains(tool)) return false;
+        if (tools.Count >= 3) return false;
+
         tools.Add(tool);
         OnInventoryChanged?.Invoke();
+        
+        if (weapon == null && selectedIndex == 0) SelectIndex(1);
         return true;
     }
 
@@ -62,10 +71,13 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
 
     public void SelectIndex(int index)
     {
-        int maxIndex = Math.Min(3, tools.Count);
-        index = Mathf.Clamp(index, 0, maxIndex);
-        if (selectedIndex == index) return;
+        int toolCount = Math.Min(3, tools.Count);
+        int slots = (weapon != null ? 1 : 0) + toolCount;
+        
+        int min = (weapon != null ? 0 : 1);
+        index = Mathf.Clamp(index, min, slots - 1);
 
+        if (selectedIndex == index) return;
         int prev = selectedIndex;
         selectedIndex = index;
         ApplySelectionVisuals(prev);
@@ -74,22 +86,33 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
 
     public void SelectNext()
     {
-        int maxIndex = Math.Min(3, tools.Count);
+        int toolCount = Math.Min(3, tools.Count);
+        int slots = (weapon != null ? 1 : 0) + toolCount;
+        if (slots <= 0) return;
+
         int prev = selectedIndex;
-        selectedIndex = (selectedIndex + 1) % (maxIndex + 1);
+        selectedIndex = (selectedIndex + 1) % slots;
+        // si caí en 0 pero no hay arma, saltar a 1
+        if (weapon == null && selectedIndex == 0 && slots > 1) selectedIndex = 1;
+
         ApplySelectionVisuals(prev);
         OnSelectionChanged?.Invoke(selectedIndex);
     }
 
     public void SelectPrev()
     {
-        int maxIndex = Math.Min(3, tools.Count);
+        int toolCount = Math.Min(3, tools.Count);
+        int slots = (weapon != null ? 1 : 0) + toolCount;
+        if (slots <= 0) return;
+
         int prev = selectedIndex;
-        selectedIndex = (selectedIndex - 1 + (maxIndex + 1)) % (maxIndex + 1);
+        selectedIndex = (selectedIndex - 1 + slots) % slots;
+        if (weapon == null && selectedIndex == 0 && slots > 1) selectedIndex = slots - 1;
+
         ApplySelectionVisuals(prev);
         OnSelectionChanged?.Invoke(selectedIndex);
     }
-
+    
     public BaseToolItem GetSelectedTool()
     {
         if (IsWeaponSelected) return null;
@@ -105,14 +128,30 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
             if (prevToolIdx >= 0 && prevToolIdx < tools.Count)
                 tools[prevToolIdx]?.OnDeselected();
         }
+
         if (weapon) weapon.gameObject.SetActive(IsWeaponSelected);
-        
+
         if (!IsWeaponSelected)
         {
             var tool = GetSelectedTool();
             tool?.OnSelected();
             if (weapon) weapon.gameObject.SetActive(false);
         }
+    }
+    
+    public void SetWeapon(BaseGun newWeapon)
+    {
+        if (weapon == newWeapon) return;
+
+        if (weapon) weapon.gameObject.SetActive(false);
+        weapon = newWeapon;
+        
+        if (selectedIndex == 0 && weapon == null && tools.Count > 0)
+            selectedIndex = 1;
+
+        ApplySelectionVisuals(previousIndex: -1);
+        OnInventoryChanged?.Invoke();
+        OnSelectionChanged?.Invoke(selectedIndex);
     }
 
     private void Update()
@@ -129,5 +168,18 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
                     SelectIndex(i - 1);
             }
         }
+    }
+    
+    public void ClearTools()
+    {
+        foreach (var t in tools) t?.OnDeselected();
+
+        tools.Clear();
+        
+        if (weapon == null && selectedIndex == 0) selectedIndex = 1;
+
+        ApplySelectionVisuals(previousIndex: -1);
+        OnInventoryChanged?.Invoke();
+        OnSelectionChanged?.Invoke(selectedIndex);
     }
 }

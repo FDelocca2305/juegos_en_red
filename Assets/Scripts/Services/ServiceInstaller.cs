@@ -12,7 +12,8 @@ public class ServiceInstaller : MonoBehaviour
     [SerializeField] private PlayerSpawner playerSpawner;
     
     [Header("Optional services")]
-    [SerializeField] private ObjectiveService objectiveService;
+    [SerializeField] private ObjectivesTracker objectivesTracker;
+    [SerializeField] private PieceSpawnGroup pieceSpawnGroup;
     
     [Header("Options")]
     [SerializeField] private bool dontDestroyOnLoad = true;
@@ -27,17 +28,19 @@ public class ServiceInstaller : MonoBehaviour
             if (spawnManager == null) spawnManager = FindObjectOfType<SpawnManager>();
             if (!gameplayUI) gameplayUI = FindObjectOfType<GameplayUIController>();
             if (!localTeamProvider) localTeamProvider = FindObjectOfType<LocalTeamProvider>();
-            if (!objectiveService) objectiveService = FindObjectOfType<ObjectiveService>();
+            if (!objectivesTracker) objectivesTracker = FindObjectOfType<ObjectivesTracker>();
             if (!photonLauncher) photonLauncher = FindObjectOfType<PhotonLauncher>();
             if (!playerSpawner) playerSpawner = FindObjectOfType<PlayerSpawner>();
+            if (!pieceSpawnGroup) pieceSpawnGroup = FindObjectOfType<PieceSpawnGroup>();
         }
         
         if (spawnManager != null) ServiceLocator.Register<ISpawnManager>(spawnManager);
         if (gameplayUI) ServiceLocator.Register<IGameplayUI>(gameplayUI);
         if (localTeamProvider) ServiceLocator.Register<ILocalTeamProvider>(localTeamProvider);
-        if (objectiveService) ServiceLocator.Register<IObjectiveService>(objectiveService);
+        if (objectivesTracker) ServiceLocator.Register<IObjectivesTracker>(objectivesTracker);
         if (photonLauncher) ServiceLocator.Register<IPhotonLauncher>(photonLauncher);
         if (playerSpawner) ServiceLocator.Register<IPlayerSpawner>(playerSpawner);
+        if (pieceSpawnGroup) ServiceLocator.Register<IPieceSpawnProvider>(pieceSpawnGroup);
     }
 
     private void OnDestroy()
@@ -45,8 +48,9 @@ public class ServiceInstaller : MonoBehaviour
         if (spawnManager != null) ServiceLocator.Deregister<ISpawnManager>(spawnManager);
         if (gameplayUI) ServiceLocator.Deregister<IGameplayUI>(gameplayUI);
         if (localTeamProvider) ServiceLocator.Deregister<ILocalTeamProvider>(localTeamProvider);
-        if (objectiveService) ServiceLocator.Deregister<IObjectiveService>(objectiveService);
+        if (objectivesTracker) ServiceLocator.Deregister<IObjectivesTracker>(objectivesTracker);
         if (photonLauncher) ServiceLocator.Deregister<IPhotonLauncher>(photonLauncher);
         if (playerSpawner) ServiceLocator.Deregister<IPlayerSpawner>(playerSpawner);
+        if (pieceSpawnGroup) ServiceLocator.Deregister<IPieceSpawnProvider>(pieceSpawnGroup);
     }
 }

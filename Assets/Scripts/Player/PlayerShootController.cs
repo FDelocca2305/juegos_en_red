@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Photon.Pun;
 using UnityEngine;
 
@@ -7,7 +8,8 @@ public class PlayerShootController : MonoBehaviourPunCallbacks, IPlayerShootCont
     [SerializeField] private GameObject bulletImpact;
     [SerializeField] private float bulletImpactLifetime = 10f;
     [SerializeField] private float muzzleDisplayTime = 0.05f;
-
+    [SerializeField] private float detectiveBlindSeconds = 10f;
+    
     [Header("PlayerParticles")] 
     [SerializeField] private GameObject playerImpact;
     
@@ -15,7 +17,8 @@ public class PlayerShootController : MonoBehaviourPunCallbacks, IPlayerShootCont
     private float _nextShootTime;
     private float _muzzleCounter;
     private IPlayerInventory _playerInventory;
-
+    private ILocalRoleProvider _roles;
+    
     public event Action<int, int> OnAmmoChanged;
     
     public override void OnEnable()
@@ -33,6 +36,7 @@ public class PlayerShootController : MonoBehaviourPunCallbacks, IPlayerShootCont
     public void SetActualBullets(float quantity)
     {
         var gun = _playerInventory.GetSelectedGun;
+        if (gun == null) return;
         gun.ActualBullets = Mathf.Clamp(quantity, 0, gun.MaxBullets);
         OnAmmoChanged?.Invoke((int)gun.ActualBullets, (int)gun.MaxBullets);
     }
@@ -40,6 +44,7 @@ public class PlayerShootController : MonoBehaviourPunCallbacks, IPlayerShootCont
     public void SetMaxBullets(float quantity)
     {
         var gun = _playerInventory.GetSelectedGun;
+        if (gun == null) return;
         gun.MaxBullets = Mathf.Max(0, quantity);
         gun.ActualBullets = Mathf.Clamp(gun.ActualBullets, 0, gun.MaxBullets);
         OnAmmoChanged?.Invoke((int)gun.ActualBullets, (int)gun.MaxBullets);
@@ -49,31 +54,34 @@ public class PlayerShootController : MonoBehaviourPunCallbacks, IPlayerShootCont
     {
         _camera = Camera.main;
         _playerInventory = GetComponent<IPlayerInventory>() ?? GetComponentInParent<IPlayerInventory>();
+        ServiceLocator.TryResolve(out _roles);
         _nextShootTime = 0f;
 
         var gun = _playerInventory.GetSelectedGun;
-        OnAmmoChanged?.Invoke((int)gun.ActualBullets, (int)gun.MaxBullets);
+        if (gun != null) OnAmmoChanged?.Invoke((int)gun.ActualBullets, (int)gun.MaxBullets);
+        else OnAmmoChanged?.Invoke(0, 0);
     }
 
     private void Update()
     {
-        if (photonView.IsMine)
+        if (!photonView.IsMine) return;
+
+        var gun = _playerInventory.GetSelectedGun;
+
+        if (gun != null && gun.MuzzleFlash.activeInHierarchy)
         {
-            var gun = _playerInventory.GetSelectedGun;
-            if (gun.MuzzleFlash.activeInHierarchy)
-            {
-                _muzzleCounter -= Time.deltaTime;
-                if (_muzzleCounter <= 0) gun.MuzzleFlash.SetActive(false);
-            }
-        
-            if (_playerInventory.IsWeaponSelected && Input.GetMouseButton(0))
-                TryShoot();
+            _muzzleCounter -= Time.deltaTime;
+            if (_muzzleCounter <= 0) gun.MuzzleFlash.SetActive(false);
         }
+
+        if (_playerInventory.IsWeaponSelected && gun != null && Input.GetMouseButton(0))
+            TryShoot();
     }
 
     private void TryShoot()
     {
         var gun = _playerInventory.GetSelectedGun;
+        if (gun == null) return;
         if (gun.ActualBullets <= 0) return;
         if (Time.time < _nextShootTime) return;
 
@@ -87,13 +95,23 @@ public class PlayerShootController : MonoBehaviourPunCallbacks, IPlayerShootCont
         var cam = _camera != null ? _camera : Camera.main;
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
         ray.origin = cam.transform.position;
-        
+
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            if (hit.collider.gameObject.CompareTag("Player"))
+            var targetView   = hit.collider.GetComponentInParent<PhotonView>();
+            var roleProvider = hit.collider.GetComponentInParent<IRoleProvider>();
+            var targetRole   = roleProvider != null ? roleProvider.Role : RoleId.Innocent;
+            var myRole       = _roles?.LocalRole ?? RoleId.Innocent;
+            
+            bool isOtherPlayer = targetView != null && targetView != photonView;
+            
+            bool doDamage = isOtherPlayer;
+            bool badShot  = doDamage && myRole == RoleId.Detective && targetRole == RoleId.Innocent;
+
+            if (doDamage)
             {
                 PhotonNetwork.Instantiate(playerImpact.name, hit.point, Quaternion.identity);
-                hit.collider.gameObject.GetPhotonView().RPC("DealDamage", RpcTarget.All, photonView.Owner.NickName);
+                targetView.RPC(nameof(DealDamage), RpcTarget.All, photonView.Owner.NickName);
             }
             else
             {
@@ -104,6 +122,9 @@ public class PlayerShootController : MonoBehaviourPunCallbacks, IPlayerShootCont
                 );
                 Destroy(bulletImpactObject, bulletImpactLifetime);
             }
+
+            if (badShot)
+                photonView.RPC(nameof(DetectivePunish), RpcTarget.All);
         }
 
         var gun = _playerInventory.GetSelectedGun;
@@ -111,14 +132,47 @@ public class PlayerShootController : MonoBehaviourPunCallbacks, IPlayerShootCont
         _muzzleCounter = muzzleDisplayTime;
     }
 
+
     [PunRPC]
     public void DealDamage(string damager)
     {
-        TakeDamage();
+        TakeDamage(damager);
+    }
+    
+    [PunRPC]
+    private void DetectivePunish()
+    {
+        if (!photonView.IsMine) return;
+
+        var ui = ServiceLocator.Resolve<UI.Gameplay.IGameplayUI>();
+        ui?.BlindFor(detectiveBlindSeconds, "You Killed an innocent!\nBlindness for 10s");
+        
+        StartCoroutine(BlindRoutineAmmo());
     }
 
-    private void TakeDamage()
+    private IEnumerator BlindRoutineAmmo()
     {
-        gameObject.SetActive(false);
+        var gun = _playerInventory.GetSelectedGun;
+        int prevMax = gun ? (int)gun.MaxBullets   : 0;
+        int prevCur = gun ? (int)gun.ActualBullets: 0;
+
+        SetMaxBullets(0);
+        SetActualBullets(0);
+
+        yield return new WaitForSeconds(detectiveBlindSeconds);
+
+        if (gun != null)
+        {
+            SetMaxBullets(prevMax);
+            SetActualBullets(prevCur);
+        }
+    }
+
+    private void TakeDamage(string damager)
+    {
+        if (photonView.IsMine)
+        {
+            ServiceLocator.Resolve<IPlayerSpawner>().Die(damager);
+        }
     }
 }

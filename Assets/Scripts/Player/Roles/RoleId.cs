@@ -1,0 +1,1 @@
+﻿public enum RoleId { Assassin = 1, Detective = 2, Innocent = 3 }

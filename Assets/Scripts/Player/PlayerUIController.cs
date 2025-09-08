@@ -16,6 +16,13 @@ public class PlayerUIController : MonoBehaviour, IPlayerUIController
         StartCoroutine(BindServices());
     }
     
+    private void BindInitialAmmo()
+    {
+        var gun = _inventory.GetSelectedGun;
+        if (gun != null) SetAmmo((int)gun.ActualBullets, (int)gun.MaxBullets);
+        else SetAmmo(0, 0);
+    }
+
     private IEnumerator BindServices()
     {
         yield return ServiceLocatorUtil.WaitFor<IPlayerInventory>(svc => _inventory = svc);
@@ -24,7 +31,14 @@ public class PlayerUIController : MonoBehaviour, IPlayerUIController
         _shoot.OnAmmoChanged += HandleAmmoChanged;
         _shoot.OnAmmoChanged += HandleNoAmmoMessage;
 
-        SetAmmo((int)_inventory.GetSelectedGun.ActualBullets, (int)_inventory.GetSelectedGun.MaxBullets);
+        BindInitialAmmo();
+    }
+
+    public void SetAmmo(int current, int max)
+    {
+        if (!ammoText) return;
+        if (max <= 0) { ammoText.text = ""; if (noAmmoText) noAmmoText.gameObject.SetActive(false); return; }
+        ammoText.text = $"{current}/{max}";
     }
 
     private void OnDestroy()
@@ -38,5 +52,4 @@ public class PlayerUIController : MonoBehaviour, IPlayerUIController
 
     private void HandleAmmoChanged(int current, int max) => SetAmmo(current, max);
     private void HandleNoAmmoMessage(int current, int max) => noAmmoText?.gameObject.SetActive(current <= 0);
-    public void SetAmmo(int current, int max) { if (ammoText) ammoText.text = $"{current}/{max}"; }
 }

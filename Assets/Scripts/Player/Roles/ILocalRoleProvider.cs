@@ -1,0 +1,1 @@
+﻿public interface ILocalRoleProvider { RoleId LocalRole { get; } }
