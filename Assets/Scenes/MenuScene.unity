@@ -2315,7 +2315,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 537529482}
-  - component: {fileID: 537529483}
+  - component: {fileID: 537529484}
+  - component: {fileID: 537529485}
   m_Layer: 0
   m_Name: === SERVICES ===
   m_TagString: Untagged
@@ -2338,7 +2339,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &537529483
+--- !u!114 &537529484
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2347,17 +2348,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 537529481}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 077bc64193364bf49b3b09406e65444a, type: 3}
+  m_Script: {fileID: 11500000, guid: 9dc38f9489cc42ed99fd909e23003bcf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnManager: {fileID: 0}
-  gameplayUI: {fileID: 0}
-  localTeamProvider: {fileID: 0}
+--- !u!114 &537529485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 537529481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75fd89be8141488aa1c5b83184de46cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   photonLauncher: {fileID: 785850726}
-  playerSpawner: {fileID: 0}
-  objectiveService: {fileID: 0}
-  dontDestroyOnLoad: 1
-  autoFindIfNull: 1
+  dontDestroyOnLoad: 0
+  autoFindIfNull: 0
 --- !u!1 &543861526
 GameObject:
   m_ObjectHideFlags: 0
@@ -2981,7 +2989,6 @@ GameObject:
   - component: {fileID: 785850723}
   - component: {fileID: 785850722}
   - component: {fileID: 785850721}
-  - component: {fileID: 785850725}
   - component: {fileID: 785850726}
   m_Layer: 5
   m_Name: Canvas
@@ -3080,18 +3087,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &785850725
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 785850720}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c65ad099cc41174c90ad3e52d5d0fd7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &785850726
 MonoBehaviour:
   m_ObjectHideFlags: 0

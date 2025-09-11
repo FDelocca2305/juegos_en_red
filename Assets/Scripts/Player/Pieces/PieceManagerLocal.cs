@@ -10,7 +10,7 @@ public class PieceManagerLocal : MonoBehaviourPunCallbacks
     [SerializeField] private PieceInteractable assassinPiece;
     [SerializeField] private PieceInteractable detectivePiece;
     [SerializeField] private PieceInteractable innocentPiece;
-    
+
     [SerializeField] private RadarToolItem radar;
     [SerializeField] private DetectiveDetectorToolItem detector;
     [SerializeField] private BaseGun innocentPistol;
@@ -20,35 +20,67 @@ public class PieceManagerLocal : MonoBehaviourPunCallbacks
     private IGameplayUI _ui;
     private Transform[] _spawnPoints;
     private int _collected;
-    
-    
+
     private IEnumerator Start()
     {
         if (!photonView.IsMine) { enabled = false; yield break; }
-        
-        yield return ServiceLocatorUtil.WaitFor<IPieceSpawnProvider>(p => _spawnPoints = p.GetPieceSpawns());
 
-        ServiceLocator.TryResolve(out _roles);
+        yield return ServiceLocatorUtil.WaitFor<IPieceSpawnProvider>(p => _spawnPoints = p.GetPieceSpawns());
+        while (RoomKeys.GetPhase() != RoomKeys.Phase_Playing) yield return null;
+        while (!ServiceLocator.TryResolve(out _roles)) yield return null;
+
         ServiceLocator.TryResolve(out _tracker);
         ServiceLocator.TryResolve(out _ui);
         SpawnForLocal();
     }
 
+    private static bool TryToInt(object o, out int val)
+    {
+        switch (o)
+        {
+            case int i: val = i; return true;
+            case byte b: val = b; return true;
+            case sbyte sb: val = sb; return true;
+            case short s: val = s; return true;
+            case ushort us: val = us; return true;
+            case uint ui: val = (int)ui; return true;
+            case long l: val = (int)l; return true;
+            case ulong ul: val = (int)ul; return true;
+            case float f: val = (int)f; return true;
+            case double d: val = (int)d; return true;
+            default:
+                try { val = System.Convert.ToInt32(o); return true; }
+                catch { val = 0; return false; }
+        }
+    }
+
+    private RoleId GetLocalRoleNow()
+    {
+        var cp = PhotonNetwork.LocalPlayer?.CustomProperties;
+        if (cp != null && cp.TryGetValue(RoleManager.RoleKey, out var v) && TryToInt(v, out var i))
+            return (RoleId)i;
+
+        return _roles?.LocalRole ?? RoleId.Innocent;
+    }
+
     private void SpawnForLocal()
     {
         var points = _spawnPoints.OrderBy(_ => Random.value).Take(6).ToArray();
-        var pick6 = points.Take(6).ToArray();
-        
-        var titles = Enumerable.Range(1, 6).Select(i => $"Pieza {i}").ToArray();
+
+        var titles = Enumerable.Range(1, 6).Select(i => $"Piece {i}").ToArray();
         _tracker?.SetObjectives(titles);
 
-        var prefab = GetPrefabFor(_roles.LocalRole);
-        for (int i = 0; i < pick6.Length; i++)
+        RoleId role = GetLocalRoleNow();
+        var prefab = GetPrefabFor(role);
+
+        for (int i = 0; i < points.Length; i++)
         {
-            var p = Instantiate(prefab, pick6[i].position, pick6[i].rotation);
+            var p = Instantiate(prefab, points[i].position, points[i].rotation);
             p.gameObject.layer = LayerMask.NameToLayer("Interactable");
             p.Init(this, i, titles[i]);
         }
+
+        _ui?.ShowHint($"Objectives created for role {role}", 1.0f);
     }
 
     private PieceInteractable GetPrefabFor(RoleId r) =>
@@ -66,7 +98,9 @@ public class PieceManagerLocal : MonoBehaviourPunCallbacks
 
     private void GrantReward()
     {
-        switch (_roles.LocalRole)
+        var role = GetLocalRoleNow();
+
+        switch (role)
         {
             case RoleId.Assassin:
                 ServiceLocator.Resolve<IPlayerInventory>()?.TryAddTool(radar);

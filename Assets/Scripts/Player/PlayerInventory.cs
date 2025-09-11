@@ -13,7 +13,7 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
     [SerializeField] private List<BaseToolItem> tools = new List<BaseToolItem>(3);
 
     [Header("Selection")]
-    [SerializeField, Range(0,3)] private int selectedIndex = 0;
+    [SerializeField, Range(0, 3)] private int selectedIndex = 0;
 
     public BaseGun GetSelectedGun => weapon;
     public IReadOnlyList<BaseToolItem> Tools => tools;
@@ -22,7 +22,7 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
 
     public event Action OnInventoryChanged;
     public event Action<int> OnSelectionChanged;
-    
+
     public override void OnEnable()
     {
         if (photonView.IsMine)
@@ -38,13 +38,31 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
     private void Awake()
     {
         tools.RemoveAll(t => t == null);
-        
+
         if (weapon == null && selectedIndex == 0 && tools.Count > 0)
             selectedIndex = 1;
 
         ApplySelectionVisuals(previousIndex: -1);
         OnInventoryChanged?.Invoke();
         OnSelectionChanged?.Invoke(selectedIndex);
+    }
+
+    private int ToolCountClamped() => Math.Min(3, tools.Count);
+    private int TotalSlots() => (weapon != null ? 1 : 0) + ToolCountClamped();
+
+    private (int min, int max) Bounds()
+    {
+        int tc = ToolCountClamped();
+        if (weapon != null)
+        {
+            // 0 (weapon) .. tc (último tool)
+            return (0, tc);
+        }
+        else
+        {
+            // 1 .. tc (solo tools)
+            return (tc > 0 ? 1 : 0, tc);
+        }
     }
 
     public bool TryAddTool(BaseToolItem tool)
@@ -55,7 +73,7 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
 
         tools.Add(tool);
         OnInventoryChanged?.Invoke();
-        
+
         if (weapon == null && selectedIndex == 0) SelectIndex(1);
         return true;
     }
@@ -64,18 +82,24 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
     {
         if (tool == null) return false;
         if (!tools.Remove(tool)) return false;
+
         OnInventoryChanged?.Invoke();
-        if (!IsWeaponSelected) SelectIndex(Mathf.Clamp(selectedIndex, 0, Math.Min(3, tools.Count)));
+
+        var (min, max) = Bounds();
+        if (selectedIndex < min || selectedIndex > max)
+            SelectIndex(Mathf.Clamp(selectedIndex, min, max));
+        else
+            OnSelectionChanged?.Invoke(selectedIndex);
+
         return true;
     }
 
     public void SelectIndex(int index)
     {
-        int toolCount = Math.Min(3, tools.Count);
-        int slots = (weapon != null ? 1 : 0) + toolCount;
-        
-        int min = (weapon != null ? 0 : 1);
-        index = Mathf.Clamp(index, min, slots - 1);
+        var (min, max) = Bounds();
+        if (min == 0 && max == 0) return; // sin slots
+
+        index = Mathf.Clamp(index, min, max);
 
         if (selectedIndex == index) return;
         int prev = selectedIndex;
@@ -86,14 +110,25 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
 
     public void SelectNext()
     {
-        int toolCount = Math.Min(3, tools.Count);
-        int slots = (weapon != null ? 1 : 0) + toolCount;
-        if (slots <= 0) return;
+        int tc = ToolCountClamped();
+        int total = TotalSlots();
+        if (total <= 0) return;
 
         int prev = selectedIndex;
-        selectedIndex = (selectedIndex + 1) % slots;
-        // si caí en 0 pero no hay arma, saltar a 1
-        if (weapon == null && selectedIndex == 0 && slots > 1) selectedIndex = 1;
+
+        if (weapon != null)
+        {
+            // índices válidos: 0..tc
+            selectedIndex = (selectedIndex + 1) % (tc + 1);
+        }
+        else
+        {
+            // índices válidos: 1..tc
+            if (tc <= 0) return;
+            int currentToolIdx = Mathf.Clamp(selectedIndex - 1, 0, tc - 1); // 0..tc-1
+            currentToolIdx = (currentToolIdx + 1) % tc;
+            selectedIndex = currentToolIdx + 1; // 1..tc
+        }
 
         ApplySelectionVisuals(prev);
         OnSelectionChanged?.Invoke(selectedIndex);
@@ -101,18 +136,29 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
 
     public void SelectPrev()
     {
-        int toolCount = Math.Min(3, tools.Count);
-        int slots = (weapon != null ? 1 : 0) + toolCount;
-        if (slots <= 0) return;
+        int tc = ToolCountClamped();
+        int total = TotalSlots();
+        if (total <= 0) return;
 
         int prev = selectedIndex;
-        selectedIndex = (selectedIndex - 1 + slots) % slots;
-        if (weapon == null && selectedIndex == 0 && slots > 1) selectedIndex = slots - 1;
+
+        if (weapon != null)
+        {
+            // 0..tc
+            selectedIndex = (selectedIndex - 1 + (tc + 1)) % (tc + 1);
+        }
+        else
+        {
+            if (tc <= 0) return;
+            int currentToolIdx = Mathf.Clamp(selectedIndex - 1, 0, tc - 1); // 0..tc-1
+            currentToolIdx = (currentToolIdx - 1 + tc) % tc;
+            selectedIndex = currentToolIdx + 1; // 1..tc
+        }
 
         ApplySelectionVisuals(prev);
         OnSelectionChanged?.Invoke(selectedIndex);
     }
-    
+
     public BaseToolItem GetSelectedTool()
     {
         if (IsWeaponSelected) return null;
@@ -122,31 +168,43 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
 
     private void ApplySelectionVisuals(int previousIndex)
     {
+        // Apagar tool previa si corresponde
         if (previousIndex > 0)
         {
             int prevToolIdx = previousIndex - 1;
             if (prevToolIdx >= 0 && prevToolIdx < tools.Count)
-                tools[prevToolIdx]?.OnDeselected();
+            {
+                var prevTool = tools[prevToolIdx];
+                prevTool?.OnDeselected();
+                if (prevTool) prevTool.gameObject.SetActive(false);
+            }
         }
 
+        // Arma visible si corresponde
         if (weapon) weapon.gameObject.SetActive(IsWeaponSelected);
 
+        // Tools
         if (!IsWeaponSelected)
         {
+            for (int i = 0; i < tools.Count; i++)
+                if (tools[i]) tools[i].gameObject.SetActive(false);
+
             var tool = GetSelectedTool();
+            if (tool) tool.gameObject.SetActive(true);
             tool?.OnSelected();
+
             if (weapon) weapon.gameObject.SetActive(false);
         }
     }
-    
+
     public void SetWeapon(BaseGun newWeapon)
     {
         if (weapon == newWeapon) return;
 
         if (weapon) weapon.gameObject.SetActive(false);
         weapon = newWeapon;
-        
-        if (selectedIndex == 0 && weapon == null && tools.Count > 0)
+
+        if (weapon == null && selectedIndex == 0 && tools.Count > 0)
             selectedIndex = 1;
 
         ApplySelectionVisuals(previousIndex: -1);
@@ -156,26 +214,24 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
 
     private void Update()
     {
-        if (photonView.IsMine)
-        {
-            float scroll = Input.GetAxisRaw("Mouse ScrollWheel");
-            if (scroll > 0f) SelectNext();
-            else if (scroll < 0f) SelectPrev();
+        if (!photonView.IsMine) return;
 
-            for (int i = 1; i <= 4; i++)
-            {
-                if (Input.GetKeyDown((i).ToString()))
-                    SelectIndex(i - 1);
-            }
-        }
+        float scroll = Input.GetAxisRaw("Mouse ScrollWheel");
+        if (scroll > 0f) SelectNext();
+        else if (scroll < 0f) SelectPrev();
+
+        if (Input.GetKeyDown(KeyCode.Alpha1)) SelectIndex(0); // arma (si hay)
+        if (Input.GetKeyDown(KeyCode.Alpha2)) SelectIndex(1); // tool 1
+        if (Input.GetKeyDown(KeyCode.Alpha3)) SelectIndex(2); // tool 2
+        if (Input.GetKeyDown(KeyCode.Alpha4)) SelectIndex(3); // tool 3
     }
-    
+
     public void ClearTools()
     {
         foreach (var t in tools) t?.OnDeselected();
 
         tools.Clear();
-        
+
         if (weapon == null && selectedIndex == 0) selectedIndex = 1;
 
         ApplySelectionVisuals(previousIndex: -1);

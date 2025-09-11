@@ -8,7 +8,6 @@ public class ServiceInstaller : MonoBehaviour
     [SerializeField] private SpawnManager spawnManager;
     [SerializeField] private GameplayUIController gameplayUI;
     [SerializeField] private LocalTeamProvider localTeamProvider;
-    [SerializeField] private PhotonLauncher photonLauncher;
     [SerializeField] private PlayerSpawner playerSpawner;
     
     [Header("Optional services")]
@@ -29,7 +28,6 @@ public class ServiceInstaller : MonoBehaviour
             if (!gameplayUI) gameplayUI = FindObjectOfType<GameplayUIController>();
             if (!localTeamProvider) localTeamProvider = FindObjectOfType<LocalTeamProvider>();
             if (!objectivesTracker) objectivesTracker = FindObjectOfType<ObjectivesTracker>();
-            if (!photonLauncher) photonLauncher = FindObjectOfType<PhotonLauncher>();
             if (!playerSpawner) playerSpawner = FindObjectOfType<PlayerSpawner>();
             if (!pieceSpawnGroup) pieceSpawnGroup = FindObjectOfType<PieceSpawnGroup>();
         }
@@ -38,7 +36,6 @@ public class ServiceInstaller : MonoBehaviour
         if (gameplayUI) ServiceLocator.Register<IGameplayUI>(gameplayUI);
         if (localTeamProvider) ServiceLocator.Register<ILocalTeamProvider>(localTeamProvider);
         if (objectivesTracker) ServiceLocator.Register<IObjectivesTracker>(objectivesTracker);
-        if (photonLauncher) ServiceLocator.Register<IPhotonLauncher>(photonLauncher);
         if (playerSpawner) ServiceLocator.Register<IPlayerSpawner>(playerSpawner);
         if (pieceSpawnGroup) ServiceLocator.Register<IPieceSpawnProvider>(pieceSpawnGroup);
     }
@@ -49,7 +46,6 @@ public class ServiceInstaller : MonoBehaviour
         if (gameplayUI) ServiceLocator.Deregister<IGameplayUI>(gameplayUI);
         if (localTeamProvider) ServiceLocator.Deregister<ILocalTeamProvider>(localTeamProvider);
         if (objectivesTracker) ServiceLocator.Deregister<IObjectivesTracker>(objectivesTracker);
-        if (photonLauncher) ServiceLocator.Deregister<IPhotonLauncher>(photonLauncher);
         if (playerSpawner) ServiceLocator.Deregister<IPlayerSpawner>(playerSpawner);
         if (pieceSpawnGroup) ServiceLocator.Deregister<IPieceSpawnProvider>(pieceSpawnGroup);
     }

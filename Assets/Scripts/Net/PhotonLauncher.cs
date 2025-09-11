@@ -4,6 +4,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 public class PhotonLauncher : MonoBehaviourPunCallbacks, IPhotonLauncher
@@ -33,6 +34,15 @@ public class PhotonLauncher : MonoBehaviourPunCallbacks, IPhotonLauncher
     {
         if (PhotonNetwork.AuthValues == null || string.IsNullOrEmpty(PhotonNetwork.AuthValues.UserId))
             PhotonNetwork.AuthValues = new AuthenticationValues(System.Guid.NewGuid().ToString());
+
+
+        PhotonNetwork.AutomaticallySyncScene = true;
+        
+        if (SceneManager.GetActiveScene().name != "MenuScene")
+        {
+            enabled = false;
+            return;
+        }
     }
 
     private void Start()
@@ -40,8 +50,17 @@ public class PhotonLauncher : MonoBehaviourPunCallbacks, IPhotonLauncher
         CloseMenus();
         loadingScreen.SetActive(true);
         loadingText.text = "Connecting To Network...";
+        
+        var state = PhotonNetwork.NetworkClientState;
 
-        PhotonNetwork.ConnectUsingSettings();
+        if (state == ClientState.PeerCreated || state == ClientState.Disconnected)
+        {
+            PhotonNetwork.ConnectUsingSettings();
+        }
+        else
+        {
+            Debug.Log($"[Launcher] Skipping ConnectUsingSettings. State={PhotonNetwork.NetworkClientState}");
+        }
     }
 
     private void CloseMenus()
@@ -92,7 +111,6 @@ public class PhotonLauncher : MonoBehaviourPunCallbacks, IPhotonLauncher
     public override void OnConnectedToMaster()
     {
         PhotonNetwork.JoinLobby();
-        PhotonNetwork.AutomaticallySyncScene = true;
         loadingText.text = "Joining Lobby...";
     }
 
@@ -247,6 +265,17 @@ public class PhotonLauncher : MonoBehaviourPunCallbacks, IPhotonLauncher
 
     public void StartGame()
     {
+        var ht = new ExitGames.Client.Photon.Hashtable
+        {
+            { RoomKeys.ROOM_LEVEL, levelToPlay },
+            { RoomKeys.PHASE, RoomKeys.Phase_Loading },
+            { RoleManager.AssignedKey, false },
+        };
+        PhotonNetwork.CurrentRoom.SetCustomProperties(ht);
+
+        PhotonNetwork.CurrentRoom.IsOpen    = false;
+        PhotonNetwork.CurrentRoom.IsVisible = false;
+
         PhotonNetwork.LoadLevel(levelToPlay);
     }
 

@@ -49,6 +49,7 @@ MonoBehaviour:
   - DealDamage
   - DetectivePunish
   - RPC_EndRound
+  - RPC_SetMyRole
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

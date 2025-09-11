@@ -1,47 +1,72 @@
-using ExitGames.Client.Photon;
+using System.Collections;
 using Photon.Pun;
+using UI.Gameplay;
 using UnityEngine;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class PlayerSpawner : MonoBehaviour, IPlayerSpawner
 {
     [SerializeField] private GameObject playerPrefab;
     private GameObject player;
+    private bool _spawned;
 
-    const string ALIVE = "alive";
-
-    private void Start()
+    private IEnumerator Start()
     {
-        if (PhotonNetwork.IsConnected) SpawnPlayer();
+        while (!PhotonNetwork.InRoom) yield return null;
+        
+        while (RoomKeys.GetPhase() != RoomKeys.Phase_Playing) yield return null;
+        while (!RolesAssigned()) yield return null;
+
+        ISpawnManager spm = null;
+        while (!ServiceLocator.TryResolve(out spm)) yield return null;
+
+        TrySpawn(spm);
+    }
+
+    private static bool RolesAssigned()
+    {
+        var room = PhotonNetwork.CurrentRoom;
+        return room?.CustomProperties != null &&
+               room.CustomProperties.TryGetValue(RoleManager.AssignedKey, out var v) &&
+               v is bool b && b;
+    }
+
+    private void TrySpawn(ISpawnManager spm)
+    {
+        if (_spawned || spm == null) return;
+        var sp = spm.GetSpawnPoint();
+        player = PhotonNetwork.Instantiate(playerPrefab.name, sp.position, sp.rotation);
+        _spawned = true;
+
+        PhotonNetwork.LocalPlayer.SetCustomProperties(
+            new ExitGames.Client.Photon.Hashtable { [RoomKeys.ALIVE] = true }
+        );
     }
 
     public void SpawnPlayer()
     {
-        Transform sp = ServiceLocator.Resolve<ISpawnManager>().GetSpawnPoint();
-        player = PhotonNetwork.Instantiate(playerPrefab.name, sp.position, sp.rotation);
-
-        var ht = PhotonNetwork.LocalPlayer.CustomProperties ?? new Hashtable();
-        ht[ALIVE] = true;
-        PhotonNetwork.LocalPlayer.SetCustomProperties(ht);
+        if (!PhotonNetwork.InRoom) return;
+        if (ServiceLocator.TryResolve(out ISpawnManager spm)) TrySpawn(spm);
     }
 
     public void Die(string damager)
     {
-        ServiceLocator.Resolve<GameplayUIController>().DeathText = "You were killed by " + damager;
-        
-        var ht = PhotonNetwork.LocalPlayer.CustomProperties ?? new Hashtable();
-        ht[ALIVE] = false;
-        PhotonNetwork.LocalPlayer.SetCustomProperties(ht);
-        
-        var role = (ServiceLocator.Resolve<ILocalRoleProvider>().LocalRole);
+        ServiceLocator.Resolve<IGameplayUI>().DeathText = "You were killed by " + damager;
+
+        PhotonNetwork.LocalPlayer.SetCustomProperties(
+            new ExitGames.Client.Photon.Hashtable { [RoomKeys.ALIVE] = false }
+        );
+
+        var role = ServiceLocator.Resolve<ILocalRoleProvider>().LocalRole;
         if (role == RoleId.Assassin)
         {
-            ServiceLocator.Resolve<IRoundService>().EndRound("INNOCENTS", "Assassin muerto");
+            ServiceLocator.Resolve<IRoundService>().EndRound("INNOCENTS", "Assassin dead");
             if (player) PhotonNetwork.Destroy(player);
             return;
         }
-        
+
         if (player) PhotonNetwork.Destroy(player);
-        ServiceLocator.Resolve<GameplayUIController>().DeathScreenActivate = true;
+        ServiceLocator.Resolve<IGameplayUI>().DeathScreenActivate = true;
         FindObjectOfType<SpectatorController>(true)?.BeginSpectate();
     }
 }

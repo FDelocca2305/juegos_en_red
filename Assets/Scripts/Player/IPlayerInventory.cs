@@ -19,6 +19,7 @@ public interface IPlayerInventory
     void SelectIndex(int index);
     void SelectNext();
     void SelectPrev();
+    void ClearTools();
 
     BaseToolItem GetSelectedTool();
 }

@@ -61,6 +61,7 @@ GameObject:
   - component: {fileID: 4208981964976032521}
   - component: {fileID: 800250956790285803}
   - component: {fileID: 4073414081364801641}
+  - component: {fileID: 5210195623814318771}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -209,7 +210,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52c7967e300253642879628f1fa4fc4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weapon: {fileID: 6615881870380280032}
+  weapon: {fileID: 0}
   tools: []
   selectedIndex: 0
 --- !u!114 &6615881869630756861
@@ -530,6 +531,18 @@ MonoBehaviour:
   interactMask:
     serializedVersion: 2
     m_Bits: 128
+--- !u!114 &5210195623814318771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6615881869630756836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa54be867d1c4564a351b98e2b2bbd7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6615881869971423863
 GameObject:
   m_ObjectHideFlags: 0
@@ -576,12 +589,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   displayName: ScannerPistol
-  icon: {fileID: 21300000, guid: 65f0e363b74cf5845ab8c3fbc14f39ac, type: 3}
+  icon: {fileID: 21300000, guid: 78b736601df34e145b113200f637e37f, type: 3}
   viewModel: {fileID: 6615881869971423863}
   cooldown: 0.25
   uses: 2
   maxDistance: 4
+  aimRadius: 0.35
   playerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  occluders:
     serializedVersion: 2
     m_Bits: 0
 --- !u!1 &6615881870375654218
@@ -685,7 +702,7 @@ MonoBehaviour:
   actualBullets: 4
   maxBullets: 4
   muzzleFlash: {fileID: 6273862086699665150}
-  icon: {fileID: 21300000, guid: 874d8401331ede14087e8d8d486ddda6, type: 3}
+  icon: {fileID: 21300000, guid: 626b9cddb29049e4cac50cd87b419945, type: 3}
 --- !u!1 &6615881870514185442
 GameObject:
   m_ObjectHideFlags: 0

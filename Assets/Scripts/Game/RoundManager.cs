@@ -1,9 +1,10 @@
-﻿using ExitGames.Client.Photon;
+﻿using System.Linq;
+using ExitGames.Client.Photon;
 using Photon.Pun;
-using Photon.Realtime;
 using UnityEngine;
 
 [DefaultExecutionOrder(-40)]
+[RequireComponent(typeof(PhotonView))]
 public class RoundManager : MonoBehaviourPunCallbacks, IRoundService
 {
     [SerializeField] private string lobbySceneName = "MenuScene";
@@ -19,54 +20,57 @@ public class RoundManager : MonoBehaviourPunCallbacks, IRoundService
     public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player target, Hashtable changedProps)
     {
         if (!PhotonNetwork.IsMasterClient) return;
-        if (!changedProps.ContainsKey(ALIVE)) return;
-
+        if (RoomKeys.GetPhase() != RoomKeys.Phase_Playing) return;
+        if (!changedProps.ContainsKey(RoomKeys.ALIVE)) return;
         Evaluate();
+    }
+
+    private void Evaluate()
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+        if (RoomKeys.GetPhase() != RoomKeys.Phase_Playing) return;
+
+        var room = PhotonNetwork.CurrentRoom;
+        if (room?.CustomProperties == null) return;
+        
+        if (!(room.CustomProperties.TryGetValue(RoleManager.AssignedKey, out var asg) && asg is bool ok && ok)) return;
+        if (!(room.CustomProperties.TryGetValue(RoomRoleKeys.ASSASSIN_ACTOR, out var ra) && ra is int assassinActor)) return;
+
+        bool assassinAlive = PhotonNetwork.PlayerList
+            .Any(p => p.ActorNumber == assassinActor && (bool)(p.CustomProperties?[RoomKeys.ALIVE] ?? true));
+
+        int othersAlive = PhotonNetwork.PlayerList
+            .Where(p => p.ActorNumber != assassinActor)
+            .Count(p => (bool)(p.CustomProperties?[RoomKeys.ALIVE] ?? true));
+
+        if (!assassinAlive)
+            photonView.RPC(nameof(RPC_EndRound), RpcTarget.All, "INNOCENTS", "Assassin dead");
+        else if (othersAlive == 0)
+            photonView.RPC(nameof(RPC_EndRound), RpcTarget.All, "ASSASSIN", "All dead");
     }
 
     public override void OnJoinedRoom()
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            var room = PhotonNetwork.CurrentRoom;
-            var ht = room.CustomProperties ?? new Hashtable();
-            ht[ROUND_OVER] = false;
-            room.SetCustomProperties(ht);
+            PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { [ROUND_OVER] = false });
         }
-    }
-
-    private void Evaluate()
-    {
-        if (!PhotonNetwork.IsMasterClient) return;
-
-        bool assassinAlive = false;
-        int othersAlive = 0;
-
-        foreach (var p in PhotonNetwork.PlayerList)
-        {
-            var role = (RoleId)((int)(p.CustomProperties?[RoleManager.RoleKey] ?? (int)RoleId.Innocent));
-            bool alive = (bool)(p.CustomProperties?[ALIVE] ?? true);
-
-            if (!alive) continue;
-
-            if (role == RoleId.Assassin) assassinAlive = true;
-            else othersAlive++;
-        }
-
-        if (!assassinAlive)
-            photonView.RPC(nameof(RPC_EndRound), RpcTarget.All, "INNOCENTS", "Assassin muerto");
-        else if (othersAlive == 0)
-            photonView.RPC(nameof(RPC_EndRound), RpcTarget.All, "ASSASSIN", "Todos eliminados");
     }
 
     public void EndRound(string winner, string reason)
         => photonView.RPC(nameof(RPC_EndRound), RpcTarget.All, winner, reason);
 
     [PunRPC]
-    private void RPC_EndRound(string winner, string reason)
+    public void RPC_EndRound(string winner, string reason)
     {
-        var ui = ServiceLocator.TryResolve<UI.Gameplay.IGameplayUI>(out var g) ? g : null;
+        ServiceLocator.TryResolve(out UI.Gameplay.IGameplayUI ui);
         ui?.ShowHint($"{winner} WIN\n{reason}", 3f);
+
+        var room = PhotonNetwork.CurrentRoom;
+        if (room != null)
+            room.SetCustomProperties(new Hashtable { [ROUND_OVER] = true });
+
+        RoomKeys.SetPhase(RoomKeys.Phase_Ending);
 
         if (PhotonNetwork.IsMasterClient)
             StartCoroutine(LoadLobbyAfter(endDelay));
