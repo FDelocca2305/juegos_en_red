@@ -50,6 +50,8 @@ MonoBehaviour:
   - DetectivePunish
   - RPC_EndRound
   - RPC_SetMyRole
+  - RPC_SetSelectedIndex
+  - RPC_ShowItemByName
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

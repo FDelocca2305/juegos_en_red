@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPlayerController
     [SerializeField] private Transform viewPoint;
     [SerializeField] private float mouseSensitivity = 1f;
     [SerializeField] private bool invertLook = false;
+    [SerializeField] private Transform modelGunPoint;
+    [SerializeField] private Transform gunHolder;
 
     [Header("Player movement")]
     [SerializeField] private float moveSpeed = 4f;
@@ -53,6 +55,12 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPlayerController
         if (photonView.IsMine)
         {
             playerModel.SetActive(false);
+        }
+        else
+        {
+            gunHolder.parent = modelGunPoint;
+            gunHolder.localPosition = Vector3.zero;
+            gunHolder.localRotation = Quaternion.identity;
         }
     }
 

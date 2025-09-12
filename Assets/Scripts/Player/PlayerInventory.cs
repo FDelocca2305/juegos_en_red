@@ -6,10 +6,8 @@ using UnityEngine;
 
 public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
 {
-    [Header("Weapon (slot 0)")]
     [SerializeField] private BaseGun weapon;
-
-    [Header("Tools (slots 1..3)")]
+    
     [SerializeField] private List<BaseToolItem> tools = new List<BaseToolItem>(3);
 
     [Header("Selection")]
@@ -55,12 +53,10 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
         int tc = ToolCountClamped();
         if (weapon != null)
         {
-            // 0 (weapon) .. tc (último tool)
             return (0, tc);
         }
         else
         {
-            // 1 .. tc (solo tools)
             return (tc > 0 ? 1 : 0, tc);
         }
     }
@@ -97,7 +93,7 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
     public void SelectIndex(int index)
     {
         var (min, max) = Bounds();
-        if (min == 0 && max == 0) return; // sin slots
+        if (min == 0 && max == 0) return;
 
         index = Mathf.Clamp(index, min, max);
 
@@ -118,16 +114,14 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
 
         if (weapon != null)
         {
-            // índices válidos: 0..tc
             selectedIndex = (selectedIndex + 1) % (tc + 1);
         }
         else
         {
-            // índices válidos: 1..tc
             if (tc <= 0) return;
-            int currentToolIdx = Mathf.Clamp(selectedIndex - 1, 0, tc - 1); // 0..tc-1
+            int currentToolIdx = Mathf.Clamp(selectedIndex - 1, 0, tc - 1);
             currentToolIdx = (currentToolIdx + 1) % tc;
-            selectedIndex = currentToolIdx + 1; // 1..tc
+            selectedIndex = currentToolIdx + 1;
         }
 
         ApplySelectionVisuals(prev);
@@ -144,15 +138,14 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
 
         if (weapon != null)
         {
-            // 0..tc
             selectedIndex = (selectedIndex - 1 + (tc + 1)) % (tc + 1);
         }
         else
         {
             if (tc <= 0) return;
-            int currentToolIdx = Mathf.Clamp(selectedIndex - 1, 0, tc - 1); // 0..tc-1
+            int currentToolIdx = Mathf.Clamp(selectedIndex - 1, 0, tc - 1);
             currentToolIdx = (currentToolIdx - 1 + tc) % tc;
-            selectedIndex = currentToolIdx + 1; // 1..tc
+            selectedIndex = currentToolIdx + 1;
         }
 
         ApplySelectionVisuals(prev);
@@ -168,7 +161,6 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
 
     private void ApplySelectionVisuals(int previousIndex)
     {
-        // Apagar tool previa si corresponde
         if (previousIndex > 0)
         {
             int prevToolIdx = previousIndex - 1;
@@ -180,10 +172,8 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
             }
         }
 
-        // Arma visible si corresponde
         if (weapon) weapon.gameObject.SetActive(IsWeaponSelected);
-
-        // Tools
+        
         if (!IsWeaponSelected)
         {
             for (int i = 0; i < tools.Count; i++)
@@ -220,10 +210,10 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
         if (scroll > 0f) SelectNext();
         else if (scroll < 0f) SelectPrev();
 
-        if (Input.GetKeyDown(KeyCode.Alpha1)) SelectIndex(0); // arma (si hay)
-        if (Input.GetKeyDown(KeyCode.Alpha2)) SelectIndex(1); // tool 1
-        if (Input.GetKeyDown(KeyCode.Alpha3)) SelectIndex(2); // tool 2
-        if (Input.GetKeyDown(KeyCode.Alpha4)) SelectIndex(3); // tool 3
+        if (Input.GetKeyDown(KeyCode.Alpha1)) SelectIndex(0);
+        if (Input.GetKeyDown(KeyCode.Alpha2)) SelectIndex(1);
+        if (Input.GetKeyDown(KeyCode.Alpha3)) SelectIndex(2);
+        if (Input.GetKeyDown(KeyCode.Alpha4)) SelectIndex(3);
     }
 
     public void ClearTools()
