@@ -13,6 +13,7 @@ public static class RoomKeys
     public const int Phase_Loading = 1;
     public const int Phase_Playing = 2;
     public const int Phase_Ending = 3;
+    public const int Phase_LobbyPersistent = 4;
 
     public static int GetPhase()
     {

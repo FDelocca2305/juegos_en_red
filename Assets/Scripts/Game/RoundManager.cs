@@ -7,7 +7,7 @@ using UnityEngine;
 [RequireComponent(typeof(PhotonView))]
 public class RoundManager : MonoBehaviourPunCallbacks, IRoundService
 {
-    [SerializeField] private string lobbySceneName = "MenuScene";
+    [SerializeField] private string lobbySceneName = "LobbyScene";
     [SerializeField] private float endDelay = 4f;
 
     const string ALIVE = "alive";
@@ -72,6 +72,24 @@ public class RoundManager : MonoBehaviourPunCallbacks, IRoundService
 
         RoomKeys.SetPhase(RoomKeys.Phase_Ending);
 
+        // Notificar al lobby sobre el resultado de la ronda
+        if (PhotonNetwork.IsMasterClient)
+        {
+            // Guardar estadísticas en las propiedades de la sala
+            var stats = new Hashtable
+            {
+                ["last_winner"] = winner,
+                ["rounds_played"] = (int)(room.CustomProperties?["rounds_played"] ?? 0) + 1
+            };
+            
+            if (winner == "ASSASSIN")
+                stats["assassin_wins"] = (int)(room.CustomProperties?["assassin_wins"] ?? 0) + 1;
+            else if (winner == "INNOCENTS")
+                stats["innocent_wins"] = (int)(room.CustomProperties?["innocent_wins"] ?? 0) + 1;
+                
+            room.SetCustomProperties(stats);
+        }
+
         if (PhotonNetwork.IsMasterClient)
             StartCoroutine(LoadLobbyAfter(endDelay));
     }
@@ -79,6 +97,8 @@ public class RoundManager : MonoBehaviourPunCallbacks, IRoundService
     private System.Collections.IEnumerator LoadLobbyAfter(float s)
     {
         yield return new WaitForSeconds(s);
-        PhotonNetwork.LoadLevel(lobbySceneName);
+        
+        // Usar SceneManager en lugar de PhotonNetwork.LoadLevel para mantener la conexión
+        UnityEngine.SceneManagement.SceneManager.LoadScene(LobbySceneName);
     }
 }

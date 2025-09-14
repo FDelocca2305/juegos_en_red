@@ -160,20 +160,8 @@ public class PhotonLauncher : MonoBehaviourPunCallbacks, IPhotonLauncher
 
     public override void OnJoinedRoom()
     {
-        CloseMenus();
-        roomScreen.SetActive(true);
-
-        roomName.text = PhotonNetwork.CurrentRoom.Name;
-        ListAllPlayers();
-
-        if (PhotonNetwork.IsMasterClient)
-        {
-            startButton.SetActive(true);
-        }
-        else
-        {
-            startButton.SetActive(false);
-        }
+        // Ir directamente al lobby en lugar de mostrar la pantalla de sala
+        PhotonNetwork.LoadLevel("LobbyScene");
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
@@ -265,6 +253,8 @@ public class PhotonLauncher : MonoBehaviourPunCallbacks, IPhotonLauncher
 
     public void StartGame()
     {
+        if (!PhotonNetwork.IsMasterClient) return;
+        
         var ht = new ExitGames.Client.Photon.Hashtable
         {
             { RoomKeys.ROOM_LEVEL, levelToPlay },
@@ -277,6 +267,12 @@ public class PhotonLauncher : MonoBehaviourPunCallbacks, IPhotonLauncher
         PhotonNetwork.CurrentRoom.IsVisible = false;
 
         PhotonNetwork.LoadLevel(levelToPlay);
+    }
+    
+    public void StartGameFromLobby()
+    {
+        // Método para iniciar juego desde el lobby persistente
+        StartGame();
     }
 
     public void QuitGame()
