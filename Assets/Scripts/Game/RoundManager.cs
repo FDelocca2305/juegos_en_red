@@ -99,6 +99,6 @@ public class RoundManager : MonoBehaviourPunCallbacks, IRoundService
         yield return new WaitForSeconds(s);
         
         // Usar SceneManager en lugar de PhotonNetwork.LoadLevel para mantener la conexión
-        UnityEngine.SceneManagement.SceneManager.LoadScene(LobbySceneName);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(lobbySceneName);
     }
 }
