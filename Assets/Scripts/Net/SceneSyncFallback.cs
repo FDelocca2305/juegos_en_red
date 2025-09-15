@@ -6,27 +6,29 @@ public class SceneSyncFallback : MonoBehaviourPunCallbacks
 {
     private const string ROOM_LEVEL = "room_level";
 
+    void Start() => TrySyncToRoomLevel();
+
+    public override void OnJoinedRoom() => TrySyncToRoomLevel();
+
     public override void OnRoomPropertiesUpdate(Hashtable changed)
     {
-        if (!changed.ContainsKey(ROOM_LEVEL)) return;
-
-        var target = changed[ROOM_LEVEL] as string;
-        if (!string.IsNullOrEmpty(target) && SceneManager.GetActiveScene().name != target)
-            PhotonNetwork.LoadLevel(target);
+        if (changed != null && changed.ContainsKey(ROOM_LEVEL))
+            TrySyncToRoomLevel();
     }
 
-    public override void OnJoinedRoom()
+    private void TrySyncToRoomLevel()
     {
-        var room = PhotonNetwork.CurrentRoom;
-        if (room == null) return;
+        var room = PhotonNetwork.CurrentRoom; 
+        if (room?.CustomProperties == null) return;
 
-        var props = room.CustomProperties;
-        if (props == null) return;
-
-        if (props.TryGetValue(ROOM_LEVEL, out var raw) && raw is string target)
+        if (room.CustomProperties.TryGetValue(ROOM_LEVEL, out var raw) && raw is string target && !string.IsNullOrEmpty(target))
         {
-            if (SceneManager.GetActiveScene().name != target)
+            var cur = SceneManager.GetActiveScene().name;
+            if (cur != target)
+            {
+                UnityEngine.Debug.Log($"[SceneSyncFallback] Sync scene → '{target}' (was '{cur}')");
                 PhotonNetwork.LoadLevel(target);
+            }
         }
     }
 }

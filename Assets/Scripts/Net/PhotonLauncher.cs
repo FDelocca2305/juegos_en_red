@@ -160,7 +160,6 @@ public class PhotonLauncher : MonoBehaviourPunCallbacks, IPhotonLauncher
 
     public override void OnJoinedRoom()
     {
-        // Ir directamente al lobby en lugar de mostrar la pantalla de sala
         PhotonNetwork.LoadLevel("LobbyScene");
     }
 
@@ -271,7 +270,6 @@ public class PhotonLauncher : MonoBehaviourPunCallbacks, IPhotonLauncher
     
     public void StartGameFromLobby()
     {
-        // Método para iniciar juego desde el lobby persistente
         StartGame();
     }
 

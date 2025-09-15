@@ -52,6 +52,7 @@ MonoBehaviour:
   - RPC_SetMyRole
   - RPC_SetSelectedIndex
   - RPC_ShowItemByName
+  - RPC_ApplyAssignedRoles
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

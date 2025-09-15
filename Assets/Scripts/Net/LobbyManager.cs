@@ -31,7 +31,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     
     private List<GameObject> playerListItems = new List<GameObject>();
     
-    // Estadísticas de rondas (se cargan desde las propiedades de la sala)
     private int roundsPlayed = 0;
     private int assassinWins = 0;
     private int innocentWins = 0;
@@ -43,20 +42,14 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         LoadRoomStats();
         UpdateUI();
         
-        // Verificar si estamos conectados a Photon
-        if (!PhotonNetwork.IsConnected)
-        {
-            Debug.LogWarning("[LobbyManager] No conectado a Photon, intentando reconectar...");
-            PhotonNetwork.ConnectUsingSettings();
-        }
+        Debug.Log("ARRANCANDO EN START LOBBY");
     }
     
     private void InitializeLobby()
     {
         if (lobbyPanel != null)
             lobbyPanel.SetActive(true);
-            
-        // Configurar botones
+        
         if (startGameButton != null)
         {
             startGameButton.onClick.AddListener(StartNewRound);
@@ -66,7 +59,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         if (leaveRoomButton != null)
             leaveRoomButton.onClick.AddListener(LeaveRoom);
         
-        // Configurar fase del lobby
         if (PhotonNetwork.IsMasterClient)
         {
             RoomKeys.SetPhase(RoomKeys.Phase_Lobby);
@@ -90,12 +82,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             voiceManager = FindObjectOfType<LobbyVoiceManager>();
     }
     
-    
     private void StartNewRound()
     {
         if (!PhotonNetwork.IsMasterClient) return;
         
-        // Usar el PhotonLauncher para iniciar el juego
         var photonLauncher = FindObjectOfType<PhotonLauncher>();
         if (photonLauncher != null)
         {
@@ -103,7 +93,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         }
         else
         {
-            // Fallback si no se encuentra PhotonLauncher
             var roomProperties = new Hashtable
             {
                 { RoomKeys.ROOM_LEVEL, gameSceneName },
@@ -126,28 +115,22 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     
     private void UpdateUI()
     {
-        // Actualizar nombre de sala
         if (roomNameText != null && PhotonNetwork.CurrentRoom != null)
             roomNameText.text = $"Sala: {PhotonNetwork.CurrentRoom.Name}";
         
-        // Actualizar contador de jugadores
         if (playerCountText != null)
             playerCountText.text = $"Jugadores: {PhotonNetwork.PlayerList.Length}/6";
         
-        // Actualizar lista de jugadores
         UpdatePlayerList();
-        
-        // Actualizar botón de empezar
+
         if (startGameButton != null)
-            startGameButton.interactable = PhotonNetwork.IsMasterClient && PhotonNetwork.PlayerList.Length >= 2;
+            startGameButton.gameObject.SetActive(PhotonNetwork.IsMasterClient && PhotonNetwork.PlayerList.Length >= 2);
         
-        // Actualizar estadísticas
         UpdateRoundStats();
     }
     
     private void UpdatePlayerList()
     {
-        // Limpiar lista actual
         foreach (var item in playerListItems)
         {
             if (item != null)
@@ -155,7 +138,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         }
         playerListItems.Clear();
         
-        // Crear nuevos items
         if (playerListItemPrefab != null && playerListParent != null)
         {
             foreach (var player in PhotonNetwork.PlayerList)
@@ -182,7 +164,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         }
     }
     
-    // Photon Callbacks
     public override void OnJoinedRoom()
     {
         Debug.Log("[LobbyManager] Unido a la sala: " + PhotonNetwork.CurrentRoom.Name);
@@ -192,18 +173,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         Debug.Log("[LobbyManager] Conectado al servidor maestro");
-        // Intentar unirse a la sala si no estamos en una
-        if (PhotonNetwork.CurrentRoom == null)
-        {
-            Debug.LogWarning("[LobbyManager] No hay sala activa, regresando al menú");
-            UnityEngine.SceneManagement.SceneManager.LoadScene("MenuScene");
-        }
     }
     
     public override void OnDisconnected(Photon.Realtime.DisconnectCause cause)
     {
         Debug.LogWarning($"[LobbyManager] Desconectado: {cause}");
-        // Regresar al menú si nos desconectamos
+        Debug.Log("SE DESCONECTOO");
         UnityEngine.SceneManagement.SceneManager.LoadScene("MenuScene");
     }
     
@@ -224,7 +199,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     
     public override void OnLeftRoom()
     {
-        // Regresar al menú principal
+        Debug.Log("SE LEFTEO LA ROOM");
         UnityEngine.SceneManagement.SceneManager.LoadScene("MenuScene");
     }
     
@@ -240,7 +215,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             }
         }
         
-        // Recargar estadísticas si han cambiado
         if (propertiesThatChanged.ContainsKey("rounds_played") || 
             propertiesThatChanged.ContainsKey("assassin_wins") || 
             propertiesThatChanged.ContainsKey("innocent_wins"))
@@ -248,22 +222,5 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             LoadRoomStats();
             UpdateRoundStats();
         }
-    }
-    
-    // Métodos públicos para actualizar estadísticas
-    public void OnRoundEnded(string winner)
-    {
-        roundsPlayed++;
-        if (winner == "ASSASSIN")
-            assassinWins++;
-        else if (winner == "INNOCENTS")
-            innocentWins++;
-            
-        UpdateRoundStats();
-    }
-    
-    private void OnDestroy()
-    {
-        // Cleanup si es necesario
     }
 }

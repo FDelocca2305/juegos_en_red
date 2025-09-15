@@ -71,11 +71,9 @@ public class RoundManager : MonoBehaviourPunCallbacks, IRoundService
             room.SetCustomProperties(new Hashtable { [ROUND_OVER] = true });
 
         RoomKeys.SetPhase(RoomKeys.Phase_Ending);
-
-        // Notificar al lobby sobre el resultado de la ronda
+        
         if (PhotonNetwork.IsMasterClient)
         {
-            // Guardar estadísticas en las propiedades de la sala
             var stats = new Hashtable
             {
                 ["last_winner"] = winner,
@@ -89,7 +87,11 @@ public class RoundManager : MonoBehaviourPunCallbacks, IRoundService
                 
             room.SetCustomProperties(stats);
         }
-
+        
+        RPC_ResetLocalPlayerProps();
+        
+        Cursor.lockState = CursorLockMode.None;
+        
         if (PhotonNetwork.IsMasterClient)
             StartCoroutine(LoadLobbyAfter(endDelay));
     }
@@ -97,8 +99,30 @@ public class RoundManager : MonoBehaviourPunCallbacks, IRoundService
     private System.Collections.IEnumerator LoadLobbyAfter(float s)
     {
         yield return new WaitForSeconds(s);
-        
-        // Usar SceneManager en lugar de PhotonNetwork.LoadLevel para mantener la conexión
-        UnityEngine.SceneManagement.SceneManager.LoadScene(lobbySceneName);
+
+        if (!PhotonNetwork.IsMasterClient) yield break;
+
+        var room = PhotonNetwork.CurrentRoom;
+        var ht = room.CustomProperties ?? new Hashtable();
+
+        ht[RoomKeys.PHASE] = RoomKeys.Phase_Lobby;
+        ht[RoleManager.AssignedKey] = false;
+        ht[RoomKeys.ROOM_LEVEL] = lobbySceneName;
+
+        room.IsOpen = true;
+        room.IsVisible = true;
+        room.SetCustomProperties(ht);
+
+        //PhotonNetwork.LoadLevel(lobbySceneName);
+    }
+
+    
+    private void RPC_ResetLocalPlayerProps()
+    {
+        var ht = PhotonNetwork.LocalPlayer.CustomProperties ?? new Hashtable();
+        ht[RoomKeys.ALIVE] = true;
+        ht[RoomKeys.READY] = null;
+        ht[RoleManager.RoleKey] = null;
+        PhotonNetwork.LocalPlayer.SetCustomProperties(ht);
     }
 }
