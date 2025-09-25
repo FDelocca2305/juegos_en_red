@@ -118,7 +118,7 @@ public class PieceManagerLocal : MonoBehaviourPunCallbacks
                 var shoot = ServiceLocator.Resolve<IPlayerShootController>();
                 shoot.SetMaxBullets(1);
                 shoot.SetActualBullets(1);
-                inv.SelectIndex(0);
+                inv.SelectIndex(0, true);
                 ServiceLocator.Resolve<UI.Gameplay.IGameplayUI>()?.ShowHint("Pistol Found", 1.2f);
                 break;
         }

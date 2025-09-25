@@ -69,8 +69,7 @@ public class PlayerLoadoutProvider : MonoBehaviourPunCallbacks
     private void ApplyLoadout()
     {
         if (!photonView.IsMine || _inv == null || _roles == null) return;
-
-        // limpiar inventario actual
+        
         _inv.SetWeapon(null);
         _inv.ClearTools();
 
@@ -90,7 +89,7 @@ public class PlayerLoadoutProvider : MonoBehaviourPunCallbacks
                         _shoot.SetActualBullets(detectiveGun.ActualBullets);
                     }
                     
-                    _inv.SelectIndex(1);
+                    _inv.SelectIndex(1, true);
                 }
                 break;
 
@@ -98,16 +97,24 @@ public class PlayerLoadoutProvider : MonoBehaviourPunCallbacks
                 {
                     _inv.TryAddTool(knife);
                     _inv.TryAddTool(paper);
-                    _inv.SelectIndex(1);
+                    _inv.SelectIndex(1, true);
                 }
                 break;
 
             case RoleId.Innocent:
                 {
                     _inv.TryAddTool(paper);
-                    _inv.SelectIndex(1);
+                    _inv.SelectIndex(1, true);
                 }
                 break;
         }
+        
+        StartCoroutine(ReselectNextFrame());
+    }
+    
+    private IEnumerator ReselectNextFrame()
+    {
+        yield return null;
+        _inv.SelectIndex(_inv.SelectedIndex, true);
     }
 }

@@ -2,17 +2,15 @@ using Photon.Pun;
 using Photon.Voice.PUN;
 using Photon.Voice.Unity;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
-/// <summary>
-/// Gestiona el chat de voz global en el lobby
-/// Todos los jugadores pueden escucharse entre sí sin restricciones de proximidad
-/// </summary>
 public class LobbyVoiceManager : MonoBehaviourPunCallbacks
 {
     [Header("Voice Components")]
     [SerializeField] private Recorder voiceRecorder;
     [SerializeField] private Speaker voiceSpeaker;
+    [SerializeField] private GameObject speakerPrefab;
     
     [Header("UI References")]
     [SerializeField] private UnityEngine.UI.Button voiceToggleButton;
@@ -26,6 +24,37 @@ public class LobbyVoiceManager : MonoBehaviourPunCallbacks
     private bool isVoiceEnabled = true;
     private Coroutine voiceCheckCoroutine;
     
+    void Awake()
+    {
+        var pvc = PunVoiceClient.Instance;
+        pvc.UsePunAppSettings  = true;
+        pvc.AutoConnectAndJoin = true;
+        
+        pvc.SpeakerPrefab = speakerPrefab;
+
+        DontDestroyOnLoad(pvc.gameObject);
+        foreach (var other in FindObjectsOfType<PunVoiceClient>())
+            if (other != pvc) Destroy(other.gameObject);
+        
+        if (voiceRecorder == null) voiceRecorder = GetComponent<Recorder>();
+        if (voiceRecorder != null)
+        {
+            pvc.PrimaryRecorder = voiceRecorder;
+            voiceRecorder.RecordWhenJoined  = true;
+            voiceRecorder.RecordingEnabled  = startWithVoiceEnabled;
+            voiceRecorder.TransmitEnabled   = startWithVoiceEnabled;
+        }
+    }
+    
+    void OnEnable()  => SceneManager.sceneLoaded += OnSceneLoaded;
+    void OnDisable() => SceneManager.sceneLoaded -= OnSceneLoaded;
+
+    private void OnSceneLoaded(Scene scn, LoadSceneMode mode)
+    {
+        if (scn.name == "LobbyScene")
+            PrepareVoiceForLobby();
+    }
+    
     private void Start()
     {
         InitializeVoiceSystem();
@@ -34,17 +63,14 @@ public class LobbyVoiceManager : MonoBehaviourPunCallbacks
     
     private void InitializeVoiceSystem()
     {
-        // Buscar componentes de voz si no están asignados
         if (voiceRecorder == null)
             voiceRecorder = GetComponent<Recorder>();
             
         if (voiceSpeaker == null)
             voiceSpeaker = GetComponent<Speaker>();
         
-        // Configurar el sistema de voz para lobby global
         if (voiceRecorder != null)
         {
-            // Grupo 0 = chat global (todos se escuchan)
             voiceRecorder.InterestGroup = 0;
             voiceRecorder.TransmitEnabled = startWithVoiceEnabled;
             voiceRecorder.RecordWhenJoined = true;
@@ -60,14 +86,12 @@ public class LobbyVoiceManager : MonoBehaviourPunCallbacks
             Debug.LogError("[LobbyVoice] Recorder no encontrado!");
         }
         
-        // Configurar speaker para audio global
         if (voiceSpeaker != null)
         {
             var audioSource = voiceSpeaker.GetComponent<AudioSource>();
             if (audioSource != null)
             {
-                // Configuración para audio global (sin atenuación por distancia)
-                audioSource.spatialBlend = 0f; // 2D audio
+                audioSource.spatialBlend = 0f;
                 audioSource.volume = 1f;
             }
             
@@ -78,7 +102,6 @@ public class LobbyVoiceManager : MonoBehaviourPunCallbacks
             Debug.LogError("[LobbyVoice] Speaker no encontrado!");
         }
         
-        // Iniciar verificación de estado de voz
         if (voiceCheckCoroutine == null)
             voiceCheckCoroutine = StartCoroutine(VoiceStatusCheck());
     }
@@ -156,23 +179,43 @@ public class LobbyVoiceManager : MonoBehaviourPunCallbacks
     public void SetVoiceEnabled(bool enabled)
     {
         isVoiceEnabled = enabled;
-        
         if (voiceRecorder != null)
         {
-            voiceRecorder.TransmitEnabled = enabled;
+            voiceRecorder.TransmitEnabled  = enabled;
             voiceRecorder.RecordingEnabled = enabled;
         }
-        
-        UpdateVoiceButtonUI();
     }
     
     public override void OnJoinedRoom()
     {
-        // Asegurar que el sistema de voz esté activo al unirse a la sala
-        if (voiceRecorder != null)
+        PrepareVoiceForLobby();
+    }
+    
+    public void PrepareVoiceForLobby()
+    {
+        var pvc = PunVoiceClient.Instance;
+        if (pvc == null || voiceRecorder == null) return;
+        
+        voiceRecorder.UserData = null;
+        
+        if (pvc.SpeakerPrefab == null && speakerPrefab != null)
+            pvc.SpeakerPrefab = speakerPrefab;
+
+        if (pvc.PrimaryRecorder != voiceRecorder)
+            pvc.PrimaryRecorder = voiceRecorder;
+
+        pvc.AddRecorder(voiceRecorder);
+        voiceRecorder.RecordingEnabled = isVoiceEnabled;
+        voiceRecorder.TransmitEnabled  = isVoiceEnabled;
+        
+        string expected = PhotonNetwork.CurrentRoom?.Name + PunVoiceClient.VoiceRoomNameSuffix;
+        if (!pvc.Client.InRoom || pvc.Client.CurrentRoom?.Name != expected)
         {
-            voiceRecorder.RecordingEnabled = isVoiceEnabled;
+            if (pvc.Client.InRoom) pvc.Client.OpLeaveRoom(false);
+            pvc.ConnectAndJoinRoom();
         }
+
+        voiceRecorder.RestartRecording();
     }
     
     private void OnDestroy()
@@ -181,7 +224,6 @@ public class LobbyVoiceManager : MonoBehaviourPunCallbacks
             StopCoroutine(voiceCheckCoroutine);
     }
     
-    // Métodos públicos para control externo
     public bool IsVoiceEnabled => isVoiceEnabled;
     public bool IsRecording => voiceRecorder != null && voiceRecorder.IsCurrentlyTransmitting;
 }

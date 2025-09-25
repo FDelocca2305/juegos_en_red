@@ -70,7 +70,7 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
         tools.Add(tool);
         OnInventoryChanged?.Invoke();
 
-        if (weapon == null && selectedIndex == 0) SelectIndex(1);
+        if (weapon == null && selectedIndex == 0) SelectIndex(1, true);
         return true;
     }
 
@@ -83,21 +83,22 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
 
         var (min, max) = Bounds();
         if (selectedIndex < min || selectedIndex > max)
-            SelectIndex(Mathf.Clamp(selectedIndex, min, max));
+            SelectIndex(Mathf.Clamp(selectedIndex, min, max), true);
         else
             OnSelectionChanged?.Invoke(selectedIndex);
 
         return true;
     }
 
-    public void SelectIndex(int index)
+    public void SelectIndex(int index, bool force = false)
     {
         var (min, max) = Bounds();
         if (min == 0 && max == 0) return;
 
         index = Mathf.Clamp(index, min, max);
 
-        if (selectedIndex == index) return;
+        if (selectedIndex == index && !force) return;
+
         int prev = selectedIndex;
         selectedIndex = index;
         ApplySelectionVisuals(prev);

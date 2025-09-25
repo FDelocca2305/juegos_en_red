@@ -16,7 +16,7 @@ public interface IPlayerInventory
 
     bool TryAddTool(BaseToolItem tool);
     bool RemoveTool(BaseToolItem tool);
-    void SelectIndex(int index);
+    void SelectIndex(int index, bool force = false);
     void SelectNext();
     void SelectPrev();
     void ClearTools();

@@ -7,6 +7,18 @@ public class ObjectivePaperToolItem : BaseToolItem
     private IGameplayUI _ui;
     private IObjectivesTracker _tracker;
     private bool _visible;
+    
+    private void Awake()
+    {
+        ServiceLocator.TryResolve(out _ui);
+        ServiceLocator.TryResolve(out _tracker);
+        if (_tracker != null) _tracker.OnObjectivesChanged += Refresh;
+    }
+    
+    private void OnEnable()
+    {
+        if (_visible) Refresh();
+    }
 
     private void Start()
     {
@@ -22,7 +34,9 @@ public class ObjectivePaperToolItem : BaseToolItem
 
     public override void OnSelected()
     {
-        base.OnSelected(); _visible = true; Refresh();
+        base.OnSelected(); 
+        _visible = true; 
+        Refresh();
     }
 
     public override void OnDeselected()
@@ -33,6 +47,8 @@ public class ObjectivePaperToolItem : BaseToolItem
     private void Refresh()
     {
         if (!_visible) return;
+        if (_ui == null) ServiceLocator.TryResolve(out _ui);
+        if (_tracker == null) ServiceLocator.TryResolve(out _tracker);
         var lines = _tracker != null ? _tracker.GetFormattedObjectives() : new[] {"No objectives"};
         _ui?.ShowObjectives(lines, true);
     }

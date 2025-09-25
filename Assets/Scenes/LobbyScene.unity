@@ -1535,7 +1535,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1049549935
 GameObject:
@@ -1632,7 +1632,7 @@ RectTransform:
   - {fileID: 817572435}
   - {fileID: 1250305949}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1834,12 +1834,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1127996579}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 926.2361, y: 527.3861, z: 0.07019043}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1308801192}
-  m_RootOrder: 2
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1127996581
 MonoBehaviour:
@@ -2246,11 +2246,10 @@ Transform:
   m_Children:
   - {fileID: 1234567891}
   - {fileID: 1933218638}
-  - {fileID: 1127996580}
   - {fileID: 1901353459}
   - {fileID: 2097505668}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1354116941
 GameObject:
@@ -2776,7 +2775,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1638342784
 GameObject:
@@ -3118,7 +3117,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1308801192}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1901353460
 MonoBehaviour:
@@ -3182,6 +3181,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   voiceRecorder: {fileID: 0}
   voiceSpeaker: {fileID: 0}
+  speakerPrefab: {fileID: 8823252275722230425, guid: 8dd081523bcb2f845bba6e68bc4e52d9, type: 3}
   voiceToggleButton: {fileID: 535099330}
   voiceStatusText: {fileID: 1354116943}
   voiceIndicator: {fileID: 1246952276}
@@ -3509,7 +3509,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1308801192}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2097505669
 MonoBehaviour:

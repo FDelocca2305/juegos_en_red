@@ -46,9 +46,9 @@ public class GameplayUIController : MonoBehaviour, IGameplayUI
     public void ShowObjectives(string[] lines, bool visible)
     {
         if (!objectivesPanel) return;
-        objectivesPanel.SetActive(visible);
         if (visible && objectivesText)
             objectivesText.text = lines != null ? string.Join("\n• ", lines).Insert(0, "• ") : "";
+        objectivesPanel.SetActive(visible);
     }
     
     public void ShowRadarTargets(Transform[] targets)

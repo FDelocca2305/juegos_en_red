@@ -4,11 +4,24 @@ using UnityEngine;
 [RequireComponent(typeof(AudioListener))]
 public class LocalOnlyAudioListener : MonoBehaviourPun
 {
+    AudioListener al;
+
     void Awake()
     {
-        var al = GetComponent<AudioListener>();
-        al.enabled = photonView.IsMine;
+        al = GetComponent<AudioListener>();
+        Apply();
     }
-    void OnEnable()  { GetComponent<AudioListener>().enabled = photonView.IsMine; }
-    void OnDisable() { var al = GetComponent<AudioListener>(); if (al) al.enabled = false; }
+
+    void OnEnable()  => Apply();
+    void OnDisable() { if (al) al.enabled = false; }
+
+    void Apply()
+    {
+        bool enable =
+            photonView == null ||                
+            !PhotonNetwork.InRoom ||             
+            photonView.IsMine;                   
+
+        al.enabled = enable;
+    }
 }
