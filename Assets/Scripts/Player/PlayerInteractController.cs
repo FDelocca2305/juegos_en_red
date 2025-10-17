@@ -33,7 +33,7 @@ public class PlayerInteractController : MonoBehaviourPunCallbacks
         if (prompt != _lastPrompt)
         {
             _lastPrompt = prompt;
-            if (string.IsNullOrEmpty(prompt)) _ui?.ShowHint("", 0.05f);
+            if (string.IsNullOrEmpty(prompt)) _ui?.ShowHint("", 1f);
             else _ui?.ShowHint(prompt, 1f);
         }
 
