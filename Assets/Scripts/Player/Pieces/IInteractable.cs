@@ -1,6 +1,6 @@
 ﻿public interface IInteractable
 {
     bool CanInteract();
-    void Interact();
+    void Interact(int? ownerActorNumber = null);
     string GetPrompt();
 }

@@ -1,18 +1,39 @@
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 
-public class LightSwitch : MonoBehaviour, IInteractable
+public class LightSwitch : MonoBehaviourPun, IInteractable, ISabotageable
 {
     [Header("Group")]
     [SerializeField] private RoomLightGroup group;
-
-    [Header("Visual Handle (optional)")]
+    
+    [Header("Visual Handle")]
     [SerializeField] private Transform handle;
     [SerializeField] private Vector3 onLocalEuler  = new Vector3(-20, 0, 0);
     [SerializeField] private Vector3 offLocalEuler = new Vector3( 20, 0, 0);
     [SerializeField] private float animTime = 0.08f;
     [SerializeField] private AudioSource clickSfx;
+    
+    [Header("Sabotage")]
+    [SerializeField] private bool sabotagedArmed;
+    [SerializeField] private Renderer indicator;
+    [SerializeField] private Color sabotagedColor = Color.red;
+    
+    private PhotonView pv;
+    
+    void Awake()
+    {
+        pv = GetComponent<PhotonView>();
+        if (!pv)
+        {
+            pv = GetComponentInParent<PhotonView>();
+        }
+        if (!pv)
+        {
+            Debug.LogError($"[LightSwitch] PhotonView.");
+        }
+    }
 
     void OnEnable()
     {
@@ -23,9 +44,39 @@ public class LightSwitch : MonoBehaviour, IInteractable
     public bool CanInteract() => true;
     public string GetPrompt() => "Toggle light";
 
-    public void Interact()
+    public void Interact(int? ownerActorNumber)
     {
+        if (FuseController.Exists && FuseController.I.Power == FuseController.PowerState.Blackout) return;
+
+        if (sabotagedArmed && group && !group.IsOn)
+        {
+            sabotagedArmed = false;
+            UpdateIndicator();
+
+            FuseController.I.TriggerBlackout();
+            return;
+        }
+        
         if (group) group.Toggle();
+    }
+    
+    public bool CanSabotage()
+    {
+        if (FuseController.Exists && FuseController.I.Power == FuseController.PowerState.Blackout) return false;
+        return !sabotagedArmed;
+    }
+    
+    public string GetSabotagePrompt() => sabotagedArmed ? "Sabotaged" : "Sabotage Switch";
+
+    public void Sabotage()
+    {
+        if (!CanSabotage()) return;
+        if (!pv) pv = GetComponent<PhotonView>();
+
+        if (PhotonNetwork.IsMasterClient)
+            pv.RPC(nameof(RpcSetSabotaged), RpcTarget.AllBuffered, true);
+        else
+            pv.RPC(nameof(RpcRequestSabotage), RpcTarget.MasterClient);
     }
 
     void OnDisable()
@@ -62,5 +113,33 @@ public class LightSwitch : MonoBehaviour, IInteractable
             yield return null;
         }
         handle.localRotation = end;
+    }
+    
+    private void UpdateIndicator()
+    {
+        if (!indicator) return;
+        var mat = indicator.material;
+        if (sabotagedArmed)
+        {
+            mat.EnableKeyword("_EMISSION");
+            mat.SetColor("_EmissionColor", sabotagedColor);
+        }
+        else
+        {
+            mat.SetColor("_EmissionColor", Color.black);
+            mat.DisableKeyword("_EMISSION");
+        }
+    }
+    
+    [PunRPC] void RpcRequestSabotage()
+    {
+        if (PhotonNetwork.IsMasterClient)
+            pv.RPC(nameof(RpcSetSabotaged), RpcTarget.AllBuffered, true);
+    }
+
+    [PunRPC] void RpcSetSabotaged(bool value)
+    {
+        sabotagedArmed = value;
+        UpdateIndicator();
     }
 }

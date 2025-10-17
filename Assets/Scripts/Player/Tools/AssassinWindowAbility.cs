@@ -5,7 +5,7 @@ public class AssassinWindowAbility : MonoBehaviourPun
 {
     [Header("Config")]
     [SerializeField] private float interactDistance = 2.0f;
-    [SerializeField] private float facingDotThreshold = 0.55f; // 0.5–0.6
+    [SerializeField] private float facingDotThreshold = 0.55f;
     [SerializeField] private float cooldownSeconds = 3f;
     [SerializeField] private LayerMask windowMask;
 
@@ -33,13 +33,11 @@ public class AssassinWindowAbility : MonoBehaviourPun
 
         if (!ServiceLocator.TryResolve<ILocalRoleProvider>(out var roles) ||
             roles.LocalRole != RoleId.Assassin) return;
-
-        // Grace post-TP
+        
         if (Time.time < _ignoreWindowsUntil) return;
 
         if (!_cam) _cam = Camera.main;
-
-        // Usá SphereCast para ser más permisivo
+        
         var origin = _cam.transform.position;
         var dir    = _cam.transform.forward;
         RaycastHit hit;
@@ -52,41 +50,34 @@ public class AssassinWindowAbility : MonoBehaviourPun
 
         var pair = endpoint.Pair;
         if (pair == null || !pair.IsUsable) return;
-
-        // Bloqueo de par reciente
+        
         if (_lastPairUsed == pair && Time.time < _lastPairBlockUntil) return;
-
-        // Distancia mínima al pivot (si estás pegado, no permitir)
+        
         Vector3 toPivot = endpoint.UsePivot.position - _cam.transform.position;
         float distToPivot = toPivot.magnitude;
         if (distToPivot < minDistanceToPivot) return;
-
-        // Mirando razonablemente al pivot
+        
         Vector3 dirToPivot = toPivot / Mathf.Max(distToPivot, 0.0001f);
         if (Vector3.Dot(_cam.transform.forward, dirToPivot) < facingDotThreshold) return;
-
-        // Si estás dentro de triggers de ventana, no permitir
+        
         if (Physics.OverlapSphere(transform.position, overlapRadius, windowMask, QueryTriggerInteraction.Collide).Length > 0)
             return;
-
-        // Cooldown de la habilidad
+        
         float remaining = _nextUseTime - Time.time;
         if (remaining > 0f)
         {
             ServiceLocator.Resolve<UI.Gameplay.IGameplayUI>()
-                ?.ShowHint($"Ventana en cooldown ({remaining:0.0}s)", 0.05f);
+                ?.ShowHint($"Window on cooldown ({remaining:0.0}s)", 0.05f);
             return;
         }
-
-        // Evitar auto-repeat mientras la tecla siga apretada
+        
         if (_requireKeyRelease)
         {
             if (!Input.GetKeyUp(KeyCode.E)) return;
             _requireKeyRelease = false;
             return;
         }
-
-        // Prompt
+        
         ServiceLocator.Resolve<UI.Gameplay.IGameplayUI>()
             ?.ShowHint("Press <b>E</b> to use window", 0.05f);
 
@@ -102,7 +93,7 @@ public class AssassinWindowAbility : MonoBehaviourPun
                 _requireKeyRelease = true;
 
                 ServiceLocator.Resolve<UI.Gameplay.IGameplayUI>()
-                    ?.ShowHint("Usaste la ventana", 1f);
+                    ?.ShowHint("You use the window", 1f);
             }
         }
     }

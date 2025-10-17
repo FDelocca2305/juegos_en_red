@@ -53,6 +53,13 @@ MonoBehaviour:
   - RPC_SetSelectedIndex
   - RPC_ShowItemByName
   - RPC_ApplyAssignedRoles
+  - RpcRequestBlackout
+  - RpcRequestRepair
+  - RpcSetFuseHolder
+  - RpcSetPower
+  - RpcTryPickupFuse
+  - RpcRequestSabotage
+  - RpcSetSabotaged
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

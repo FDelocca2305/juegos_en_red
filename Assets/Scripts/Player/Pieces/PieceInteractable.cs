@@ -17,7 +17,7 @@ public class PieceInteractable : MonoBehaviour, IInteractable
     public bool CanInteract() => !collected;
     public string GetPrompt() => "Pick Up Piece";
 
-    public void Interact()
+    public void Interact(int? ownerActorNumber)
     {
         if (collected) return;
         collected = true;
