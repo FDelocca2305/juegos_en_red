@@ -110,6 +110,7 @@ GameObject:
   - component: {fileID: 3212799651828019245}
   - component: {fileID: 4836833990015425340}
   - component: {fileID: 2289075238878319558}
+  - component: {fileID: 6227687717860862847}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -581,6 +582,9 @@ MonoBehaviour:
   interactMask:
     serializedVersion: 2
     m_Bits: 128
+  useKey: 101
+  sabotageKey: 114
+  sabotageAbility: {fileID: 6227687717860862847}
 --- !u!114 &5210195623814318771
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -642,6 +646,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DistanceOpen: 3
   text: {fileID: 9018610356997463443, guid: 59d24d1e47ea8e04f99bcc90be961c33, type: 3}
+--- !u!114 &6227687717860862847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6615881869630756836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bda43f16dd94bec967009c38207d47d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cooldownSeconds: 60
 --- !u!1 &6615881869971423863
 GameObject:
   m_ObjectHideFlags: 0
