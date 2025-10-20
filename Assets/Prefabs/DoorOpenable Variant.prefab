@@ -9,7 +9,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1621344227884394, guid: 1570559eee7006f428dd974779e824ce, type: 3}
       propertyPath: m_Name
-      value: DoorOpenable
+      value: DoorOpenable Variant
       objectReference: {fileID: 0}
     - target: {fileID: 4894436672217640, guid: 1570559eee7006f428dd974779e824ce, type: 3}
       propertyPath: m_RootOrder
@@ -57,3 +57,47 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1570559eee7006f428dd974779e824ce, type: 3}
+--- !u!1 &3013341713952547360 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1034450928204766, guid: 1570559eee7006f428dd974779e824ce, type: 3}
+  m_PrefabInstance: {fileID: 3013513436947470846}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4267971705003175878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3013341713952547360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 0
+  ObservedComponents:
+  - {fileID: 6912673130032031197}
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &6912673130032031197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3013341713952547360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 1
+  m_UseLocal: 1

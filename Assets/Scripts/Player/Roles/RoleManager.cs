@@ -56,20 +56,17 @@ public class RoleManager : MonoBehaviourPunCallbacks, ILocalRoleProvider
         if (courtesyDelay > 0f) yield return new WaitForSeconds(courtesyDelay);
 
         float readyDeadline = Time.time + readyWaitTimeout;
-
-        // Espera mínimos
+        
         while (PhotonNetwork.PlayerList.Length < minPlayersForRoles && Time.time < readyDeadline)
         {
             yield return new WaitForSeconds(0.25f);
         }
-
-        // Espera READY (o timeout)
+        
         while (!AllPlayersReady() && Time.time < readyDeadline)
         {
             yield return new WaitForSeconds(0.25f);
         }
-
-        // Reintentos hasta asignar
+        
         float end = Time.time + retryTimeout;
         while (!RolesAlreadyAssigned() && Time.time < end)
         {

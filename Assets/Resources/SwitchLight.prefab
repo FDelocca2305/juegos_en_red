@@ -61,7 +61,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5175683865378808666, guid: 6f26a0bd48edcc844bf9015ad5ce30cb, type: 3}
       propertyPath: m_Name
-      value: SwitchLight Variant
+      value: SwitchLight
+      objectReference: {fileID: 0}
+    - target: {fileID: 6567749623454314868, guid: 6f26a0bd48edcc844bf9015ad5ce30cb, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6f26a0bd48edcc844bf9015ad5ce30cb, type: 3}
