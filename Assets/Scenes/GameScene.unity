@@ -38770,7 +38770,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 90
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -49208,7 +49208,20 @@ PrefabInstance:
       propertyPath: sceneViewId
       value: 43
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 6912673130032031197, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
+      propertyPath: m_SynchronizeScale
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6912673130032031197, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
+      propertyPath: m_SynchronizePosition
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6912673130032031197, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
+      propertyPath: m_SynchronizeRotation
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 6912673130032031197, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
 --- !u!4 &1246942654 stripped
 Transform:
