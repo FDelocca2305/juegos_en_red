@@ -9,8 +9,13 @@ public class FlashlightIconUI : MonoBehaviour
     [SerializeField] private Sprite offSprite;
 
     private IFlashlightController _flashlight;
+    
+    private void Awake()
+    {
+        StartCoroutine(Bind());
+    }
 
-    private IEnumerator Start()
+    private IEnumerator Bind()
     {
         yield return ServiceLocatorUtil.WaitFor<IFlashlightController>(svc => _flashlight = svc);
         _flashlight.OnChanged += Refresh;

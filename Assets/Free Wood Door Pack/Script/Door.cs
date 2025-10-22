@@ -14,7 +14,6 @@ public class Door : MonoBehaviourPun {
 	[SerializeField] float openAngle = -90f;
 	[SerializeField] float closeAngle = 0f;
 	
-	
 	public bool open;
 	public float smooth = 1.0f;
 	public AudioSource asource;
@@ -60,7 +59,7 @@ public class Door : MonoBehaviourPun {
 		_isOpen = open;
 		_animStart = sentAt;
 
-		if (asource)
+		if (asource && info.Sender.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber)
 		{
 			asource.clip = open ? openDoor : closeDoor;
 			asource.Play();
