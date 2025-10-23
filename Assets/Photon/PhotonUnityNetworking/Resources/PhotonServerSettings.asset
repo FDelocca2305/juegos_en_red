@@ -64,6 +64,9 @@ MonoBehaviour:
   - RPC_SetReady
   - RPC_SetOpen
   - RPC_SetState
+  - RPC_SetLit
+  - RPC_EnableOuijaBuffered
+  - RPC_PlayActivationSfx
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
