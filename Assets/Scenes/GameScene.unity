@@ -4704,7 +4704,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8443637742291674507, guid: 019747cfb4a65e44d96eb213ab06ecfe, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.273
+      value: 2.006
       objectReference: {fileID: 0}
     - target: {fileID: 8443637742291674507, guid: 019747cfb4a65e44d96eb213ab06ecfe, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4742,6 +4742,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Candle (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 9107971036444376881, guid: 019747cfb4a65e44d96eb213ab06ecfe, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 019747cfb4a65e44d96eb213ab06ecfe, type: 3}
 --- !u!1 &101256446 stripped
@@ -4757,7 +4761,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 101256446}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
@@ -34354,7 +34358,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8443637742291674507, guid: 019747cfb4a65e44d96eb213ab06ecfe, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.273
+      value: 2.006
       objectReference: {fileID: 0}
     - target: {fileID: 8443637742291674507, guid: 019747cfb4a65e44d96eb213ab06ecfe, type: 3}
       propertyPath: m_LocalPosition.z
@@ -34392,6 +34396,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Candle (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 9107971036444376881, guid: 019747cfb4a65e44d96eb213ab06ecfe, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 019747cfb4a65e44d96eb213ab06ecfe, type: 3}
 --- !u!1 &818936604 stripped
@@ -34407,7 +34415,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 818936604}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
@@ -35856,7 +35864,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8443637742291674507, guid: 019747cfb4a65e44d96eb213ab06ecfe, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.273
+      value: 2.006
       objectReference: {fileID: 0}
     - target: {fileID: 8443637742291674507, guid: 019747cfb4a65e44d96eb213ab06ecfe, type: 3}
       propertyPath: m_LocalPosition.z
@@ -35894,6 +35902,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Candle (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 9107971036444376881, guid: 019747cfb4a65e44d96eb213ab06ecfe, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 019747cfb4a65e44d96eb213ab06ecfe, type: 3}
 --- !u!1 &862083488 stripped
@@ -35909,7 +35921,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 862083488}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
@@ -85585,6 +85597,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1543955760, guid: 9a2fc3f18598a244a8486114521ac3ea, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1543955762, guid: 9a2fc3f18598a244a8486114521ac3ea, type: 3}
       propertyPath: sceneViewId
       value: 46
@@ -85599,7 +85615,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3487717027406136485, guid: 9a2fc3f18598a244a8486114521ac3ea, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.273
+      value: 2.006
       objectReference: {fileID: 0}
     - target: {fileID: 3487717027406136485, guid: 9a2fc3f18598a244a8486114521ac3ea, type: 3}
       propertyPath: m_LocalPosition.z

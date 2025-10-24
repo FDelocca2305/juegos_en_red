@@ -14,7 +14,7 @@ public class CandleInteractable : MonoBehaviourPun, IInteractable
     void Awake()
     {
         var col = GetComponent<Collider>();
-        col.isTrigger = true;
+        //col.isTrigger = true;
         if (fireModel) fireModel.SetActive(IsLit);
     }
 
@@ -25,6 +25,8 @@ public class CandleInteractable : MonoBehaviourPun, IInteractable
     
     public bool CanInteract()
     {
+        ServiceLocator.TryResolve(out _flashlight);
+        Debug.Log(_flashlight.IsOn);
         return !IsLit && _flashlight != null && _flashlight.IsOn;
     }
 
