@@ -67,6 +67,10 @@ MonoBehaviour:
   - RPC_SetLit
   - RPC_EnableOuijaBuffered
   - RPC_PlayActivationSfx
+  - RPC_PlayNetworkSound
+  - RPC_PlayPlayerDeath
+  - RPC_PlayPlayerImpact
+  - RPC_PlayWallImpact
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

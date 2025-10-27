@@ -18,6 +18,8 @@ public class PlayerShootController : MonoBehaviourPunCallbacks, IPlayerShootCont
     private float _muzzleCounter;
     private IPlayerInventory _playerInventory;
     private ILocalRoleProvider _roles;
+    private AudioManager _audioManager;
+    private ImpactAudioController _impactAudioController;
     
     public event Action<int, int> OnAmmoChanged;
     
@@ -55,6 +57,8 @@ public class PlayerShootController : MonoBehaviourPunCallbacks, IPlayerShootCont
         _camera = Camera.main;
         _playerInventory = GetComponent<IPlayerInventory>() ?? GetComponentInParent<IPlayerInventory>();
         ServiceLocator.TryResolve(out _roles);
+        _audioManager = AudioManager.Instance;
+        _impactAudioController = GetComponent<ImpactAudioController>() ?? GetComponentInParent<ImpactAudioController>();
         _nextShootTime = 0f;
 
         var gun = _playerInventory.GetSelectedGun;
@@ -112,6 +116,12 @@ public class PlayerShootController : MonoBehaviourPunCallbacks, IPlayerShootCont
             {
                 PhotonNetwork.Instantiate(playerImpact.name, hit.point, Quaternion.identity);
                 targetView.RPC(nameof(DealDamage), RpcTarget.All, photonView.Owner.NickName);
+                
+                // Reproducir sonido de impacto en jugador
+                if (_impactAudioController != null)
+                {
+                    _impactAudioController.PlayPlayerImpact(hit.point);
+                }
             }
             else
             {
@@ -121,6 +131,12 @@ public class PlayerShootController : MonoBehaviourPunCallbacks, IPlayerShootCont
                     Quaternion.LookRotation(hit.normal, Vector3.up)
                 );
                 Destroy(bulletImpactObject, bulletImpactLifetime);
+                
+                // Reproducir sonido de impacto en pared
+                if (_impactAudioController != null)
+                {
+                    _impactAudioController.PlayWallImpact(hit.point);
+                }
             }
 
             if (badShot)
@@ -130,6 +146,9 @@ public class PlayerShootController : MonoBehaviourPunCallbacks, IPlayerShootCont
         var gun = _playerInventory.GetSelectedGun;
         gun.MuzzleFlash.SetActive(true);
         _muzzleCounter = muzzleDisplayTime;
+        
+        // Reproducir sonido de disparo
+        PlayShootSound(gun);
     }
 
 
@@ -174,5 +193,30 @@ public class PlayerShootController : MonoBehaviourPunCallbacks, IPlayerShootCont
         {
             ServiceLocator.Resolve<IPlayerSpawner>().Die(damager);
         }
+    }
+
+    private void PlayShootSound(BaseGun gun)
+    {
+        if (_audioManager == null || gun == null) return;
+
+        // Determinar el tipo de arma y reproducir el sonido correspondiente
+        string gunType = gun.name.ToLower();
+        string soundName = "shot_pistol"; // Default
+
+        if (gunType.Contains("rifle"))
+        {
+            soundName = "shot_rifle";
+        }
+        else if (gunType.Contains("machinegun") || gunType.Contains("machine"))
+        {
+            soundName = "shot_machinegun";
+        }
+        else if (gunType.Contains("pistol"))
+        {
+            soundName = "shot_pistol";
+        }
+
+        // Reproducir sonido de red para que otros jugadores lo escuchen
+        _audioManager.PlayNetworkSoundAtPosition(soundName, transform.position);
     }
 }

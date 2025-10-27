@@ -722,6 +722,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DoorOpenable Variant (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 4267971705003175878, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
+      propertyPath: sceneViewId
+      value: 34
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
 --- !u!4 &139298911 stripped
@@ -2264,6 +2268,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DoorOpenable Variant (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 4267971705003175878, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
+      propertyPath: sceneViewId
+      value: 33
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
 --- !u!4 &432392982 stripped
@@ -3371,6 +3379,10 @@ PrefabInstance:
     - target: {fileID: 3015129283147080852, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
       propertyPath: m_Name
       value: DoorOpenable Variant (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4267971705003175878, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
+      propertyPath: sceneViewId
+      value: 32
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
@@ -4601,6 +4613,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DoorOpenable Variant (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 4267971705003175878, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
+      propertyPath: sceneViewId
+      value: 31
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
 --- !u!4 &735492584 stripped
@@ -5155,6 +5171,57 @@ Light:
   m_CorrespondingSourceObject: {fileID: 8543861269302068762, guid: a90d668d4dcd03d44ab86637a67a9cf2, type: 3}
   m_PrefabInstance: {fileID: 793785130}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &802056313
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 802056315}
+  - component: {fileID: 802056314}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &802056314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 802056313}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8797e7fd75adfa74a8df1aeda7ff0604, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioClips:
+  - name: footstep_slow
+    clip: {fileID: 8300000, guid: 617e1c8612e8f1b4fb9b26665d1fab99, type: 3}
+    volume: 0.7
+    pitch: 1
+    is3D: 1
+    maxDistance: 12
+--- !u!4 &802056315
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 802056313}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -47.10414, y: -0.11021328, z: -142.92201}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 30
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &804065231
 GameObject:
   m_ObjectHideFlags: 0
@@ -7130,6 +7197,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DoorOpenable Variant (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 4267971705003175878, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
+      propertyPath: sceneViewId
+      value: 30
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
 --- !u!1001 &1096089229
@@ -8253,6 +8324,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DoorOpenable Variant (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 4267971705003175878, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
+      propertyPath: sceneViewId
+      value: 29
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
 --- !u!4 &1199988422 stripped
@@ -9026,6 +9101,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DoorOpenable Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 4267971705003175878, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
+      propertyPath: sceneViewId
+      value: 28
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
 --- !u!1 &1261677953
@@ -9395,6 +9474,10 @@ PrefabInstance:
     - target: {fileID: 3015129283147080852, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
       propertyPath: m_Name
       value: DoorOpenable Variant (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4267971705003175878, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
+      propertyPath: sceneViewId
+      value: 27
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
@@ -10298,6 +10381,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DoorOpenable Variant (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 4267971705003175878, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
+      propertyPath: sceneViewId
+      value: 26
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
 --- !u!4 &1413111987 stripped
@@ -10446,6 +10533,10 @@ PrefabInstance:
     - target: {fileID: 3015129283147080852, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
       propertyPath: m_Name
       value: DoorOpenable Variant (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4267971705003175878, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
+      propertyPath: sceneViewId
+      value: 25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
@@ -10683,6 +10774,10 @@ PrefabInstance:
     - target: {fileID: 3015129283147080852, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
       propertyPath: m_Name
       value: DoorOpenable Variant (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4267971705003175878, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
+      propertyPath: sceneViewId
+      value: 24
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
@@ -12686,6 +12781,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DoorOpenable Variant (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 4267971705003175878, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
+      propertyPath: sceneViewId
+      value: 23
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
 --- !u!4 &1643211262 stripped
@@ -13764,6 +13863,10 @@ PrefabInstance:
     - target: {fileID: 3015129283147080852, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
       propertyPath: m_Name
       value: DoorOpenable Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 4267971705003175878, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
+      propertyPath: sceneViewId
+      value: 22
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
@@ -15835,6 +15938,10 @@ PrefabInstance:
     - target: {fileID: 3015129283147080852, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
       propertyPath: m_Name
       value: DoorOpenable Variant (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4267971705003175878, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}
+      propertyPath: sceneViewId
+      value: 21
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f31533d00d29fa46b43be0089c236af, type: 3}

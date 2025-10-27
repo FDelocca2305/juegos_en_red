@@ -92,6 +92,8 @@ GameObject:
   - component: {fileID: 6615881869630756834}
   - component: {fileID: 6615881869630756835}
   - component: {fileID: 6615881869630756860}
+  - component: {fileID: 5357912920643818940}
+  - component: {fileID: 8301533663869837965}
   - component: {fileID: 6615881869630756861}
   - component: {fileID: 6615881869630756862}
   - component: {fileID: 6615881869630756863}
@@ -267,6 +269,41 @@ MonoBehaviour:
   weapon: {fileID: 0}
   tools: []
   selectedIndex: 0
+--- !u!114 &5357912920643818940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6615881869630756836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25638224a260b96408a562f8cb6fab2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkFootstepSound: footstep_slow
+  runFootstepSound: footstep_fast
+  walkStepInterval: 0.6
+  runStepInterval: 0.4
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 9
+  groundCheckDistance: 0.1
+--- !u!114 &8301533663869837965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6615881869630756836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14713237604e3c34ca61f98946c8685d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wallImpactSound: impact_wall
+  playerImpactSound: impact_player
+  maxDistance: 15
 --- !u!114 &6615881869630756861
 MonoBehaviour:
   m_ObjectHideFlags: 0
