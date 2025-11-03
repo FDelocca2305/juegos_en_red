@@ -25,6 +25,8 @@ public class PhotonLauncher : MonoBehaviourPunCallbacks, IPhotonLauncher
     [SerializeField] private TMP_InputField nameInput;
     [SerializeField] private string levelToPlay;
     [SerializeField] private GameObject startButton;
+    [SerializeField] private GameObject leaderboardScreen;
+    [SerializeField] private LeaderboardUI leaderboardUI;
     
     private List<RoomButton> roomButtons = new List<RoomButton>();
     private List<TMP_Text> playerLabels = new List<TMP_Text>();
@@ -72,6 +74,7 @@ public class PhotonLauncher : MonoBehaviourPunCallbacks, IPhotonLauncher
         errorScreen.SetActive(false);
         roomBrowserScreen.SetActive(false);
         nameInputScreen.SetActive(false);
+        leaderboardScreen.SetActive(false);
     }
 
     private void ListAllPlayers()
@@ -258,23 +261,8 @@ public class PhotonLauncher : MonoBehaviourPunCallbacks, IPhotonLauncher
 
         }
     }
+    
     #region LootLocker
-    //LootLockerSetName
-    private void ApplyPlayerName(string newName)
-    {
-        PhotonNetwork.NickName = newName;
-
-        PlayerPrefs.SetString("playerName", newName);
-
-        if (LootLockerBootsStrap.SessionStarted)
-        {
-            PlayerNameHelper.SetPlayerName(newName);
-        }
-        else
-        {
-            StartCoroutine(SetLootLockerNameWhenReady(newName));
-        }
-    }
 
     private System.Collections.IEnumerator SetLootLockerNameWhenReady(string newName)
     {
@@ -311,6 +299,17 @@ public class PhotonLauncher : MonoBehaviourPunCallbacks, IPhotonLauncher
     public void QuitGame()
     {
         Application.Quit();
+    }
+
+    public void OpenLeaderboardScreen()
+    {
+        leaderboardScreen.SetActive(true);
+        leaderboardUI.Refresh();
+    }
+
+    public void CloseLeaderboardScreen()
+    {
+        leaderboardScreen.SetActive(false);
     }
 
     public override void OnMasterClientSwitched(Photon.Realtime.Player newMasterClient)

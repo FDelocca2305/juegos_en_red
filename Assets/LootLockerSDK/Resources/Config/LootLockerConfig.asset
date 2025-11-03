@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 182cd195a28310e479cddf7ff82822f8, type: 3}
   m_Name: LootLockerConfig
   m_EditorClassIdentifier: 
-  apiKey: dev_0cd907719afa42d5909aaf9caab31634
-  adminToken: 82b7bad3e7c4515f4c207d1900f69561d25a1b2a
-  domainKey: 3drhbji4
+  apiKey: dev_a74ae341343f4a57a40378bb78a4df45
+  adminToken: bb497dcf559335324a004bcf15722631096cf79e
+  domainKey: nazzwnhs
   game_version: 1.0.0.0
   sdk_version: 6.4.0
   url: https://api.lootlocker.com/v1

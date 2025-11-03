@@ -16,11 +16,13 @@ public class LootLockerBootsStrap : MonoBehaviour
 
     private void StartGuest()
     {
-        LootLockerSDKManager.StartGuestSession(playerIdentifier, response =>
+        LootLockerSDKManager.StartGuestSession(UnityEngine.Random.Range(1f, 999f).ToString(), response =>
         {
             if (!response.success)
             {
                 Debug.LogError("Fail");
+                Debug.Log(response.errorData.message);
+                Debug.Log(response.errorData.code);
                 return;
             }
             SessionStarted = true;
