@@ -18,6 +18,8 @@ public class RoundManager : MonoBehaviourPunCallbacks, IRoundService
     [SerializeField] private string assassinLeaderboardKey = "wins_assasins_round";
     [SerializeField] private int assassinWinScore = 1;
 
+    [SerializeField] private string innocentLeaderboardKey = "wins_innocent_round";
+    [SerializeField] private int innocentWinScore = 1;
     private void Awake() => ServiceLocator.Register<IRoundService>(this);
     private void OnDestroy() { if (ServiceLocator.TryResolve<IRoundService>(out _)) ServiceLocator.Deregister<IRoundService>(this); }
 
@@ -101,7 +103,17 @@ public class RoundManager : MonoBehaviourPunCallbacks, IRoundService
                     StartCoroutine(SubmitAssassinWinWhenReady());
                 }
             }
-
+            if (winner == "INNOCENTS" && !string.IsNullOrEmpty(innocentLeaderboardKey))
+            {
+                if (LootLockerBootsStrap.SessionStarted)
+                {
+                    LeaderboardService.SubmitScore(innocentWinScore, innocentLeaderboardKey);
+                }
+                else
+                {
+                    StartCoroutine(SubmitAssassinWinWhenReady());
+                }
+            }
             room.SetCustomProperties(stats);
         }
         

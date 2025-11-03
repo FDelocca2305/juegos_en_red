@@ -21,8 +21,8 @@ public class LootLockerBootsStrap : MonoBehaviour
             if (!response.success)
             {
                 Debug.LogError("Fail");
-                Debug.Log(response.errorData.message);
-                Debug.Log(response.errorData.code);
+                Debug.LogError(response.errorData.message);
+                Debug.LogError(response.errorData.code);
                 return;
             }
             SessionStarted = true;
