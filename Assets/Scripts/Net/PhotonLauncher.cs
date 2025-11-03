@@ -242,13 +242,48 @@ public class PhotonLauncher : MonoBehaviourPunCallbacks, IPhotonLauncher
             PhotonNetwork.NickName = nameInput.text;
             
             PlayerPrefs.SetString("playerName", nameInput.text);
-            
+
+            if (LootLockerBootsStrap.SessionStarted)
+            {
+                PlayerNameHelper.SetPlayerName(nameInput.text);
+            }
+            else
+            {
+                StartCoroutine(SetLootLockerNameWhenReady(nameInput.text));
+            }
             CloseMenus();
             menuButtons.SetActive(true);
 
             hasSetNickname = true;
+
         }
     }
+    #region LootLocker
+    //LootLockerSetName
+    private void ApplyPlayerName(string newName)
+    {
+        PhotonNetwork.NickName = newName;
+
+        PlayerPrefs.SetString("playerName", newName);
+
+        if (LootLockerBootsStrap.SessionStarted)
+        {
+            PlayerNameHelper.SetPlayerName(newName);
+        }
+        else
+        {
+            StartCoroutine(SetLootLockerNameWhenReady(newName));
+        }
+    }
+
+    private System.Collections.IEnumerator SetLootLockerNameWhenReady(string newName)
+    {
+        while (!LootLockerBootsStrap.SessionStarted)
+            yield return null;
+
+        PlayerNameHelper.SetPlayerName(newName);
+    }
+    #endregion
 
     public void StartGame()
     {

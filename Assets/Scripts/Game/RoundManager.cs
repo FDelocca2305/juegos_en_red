@@ -14,6 +14,10 @@ public class RoundManager : MonoBehaviourPunCallbacks, IRoundService
     const string WINNER = "winner";
     const string ROUND_OVER = "round_over";
 
+    //Leaderboard score only assasin
+    [SerializeField] private string assassinLeaderboardKey = "wins_assasins_round";
+    [SerializeField] private int assassinWinScore = 1;
+
     private void Awake() => ServiceLocator.Register<IRoundService>(this);
     private void OnDestroy() { if (ServiceLocator.TryResolve<IRoundService>(out _)) ServiceLocator.Deregister<IRoundService>(this); }
 
@@ -84,7 +88,20 @@ public class RoundManager : MonoBehaviourPunCallbacks, IRoundService
                 stats["assassin_wins"] = (int)(room.CustomProperties?["assassin_wins"] ?? 0) + 1;
             else if (winner == "INNOCENTS")
                 stats["innocent_wins"] = (int)(room.CustomProperties?["innocent_wins"] ?? 0) + 1;
-                
+
+            //Leaderboard score only assasin
+            if (winner == "ASSASSIN" && !string.IsNullOrEmpty(assassinLeaderboardKey))
+            {
+                if (LootLockerBootsStrap.SessionStarted)
+                {
+                    LeaderboardService.SubmitScore(assassinWinScore, assassinLeaderboardKey);
+                }
+                else
+                {
+                    StartCoroutine(SubmitAssassinWinWhenReady());
+                }
+            }
+
             room.SetCustomProperties(stats);
         }
         
@@ -124,5 +141,13 @@ public class RoundManager : MonoBehaviourPunCallbacks, IRoundService
         ht[RoomKeys.READY] = null;
         ht[RoleManager.RoleKey] = null;
         PhotonNetwork.LocalPlayer.SetCustomProperties(ht);
+    }
+
+        private System.Collections.IEnumerator SubmitAssassinWinWhenReady()
+    {
+        while (!LootLockerBootsStrap.SessionStarted)
+            yield return null;
+
+        LeaderboardService.SubmitScore(assassinWinScore, assassinLeaderboardKey);
     }
 }
