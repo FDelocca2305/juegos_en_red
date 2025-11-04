@@ -71,6 +71,7 @@ MonoBehaviour:
   - RPC_PlayPlayerDeath
   - RPC_PlayPlayerImpact
   - RPC_PlayWallImpact
+  - RPC_RequestToggle
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
