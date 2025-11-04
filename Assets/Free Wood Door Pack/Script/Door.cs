@@ -15,18 +15,15 @@ namespace DoorScript
         [SerializeField] AudioSource asource;
         [SerializeField] AudioClip openDoor;
         [SerializeField] AudioClip closeDoor;
-
-        // Estado net
+        
         bool         isOpen;
-        double       animStart;      // PhotonNetwork.Time del inicio de anim
-        int          seq;            // versión local que incrementa el owner
+        double       animStart;
+        int          seq;
 
-        // Para reconstruir la anim localmente en todos
         Quaternion   startRot;
         Quaternion   targetRot;
         Quaternion   qOpen, qClose;
-
-        // Para evitar doble SFX
+        
         int          lastAppliedSeq = -1;
 
         void Awake()
@@ -34,8 +31,7 @@ namespace DoorScript
             if (!asource) asource = GetComponent<AudioSource>();
             qOpen  = Quaternion.Euler(0f, openAngle, 0f);
             qClose = Quaternion.Euler(0f, closeAngle, 0f);
-
-            // Estado inicial (puerta cerrada por defecto)
+            
             isOpen    = false;
             startRot  = transform.localRotation;
             targetRot = qClose;
@@ -44,36 +40,27 @@ namespace DoorScript
 
         void Start()
         {
-            // IMPORTANTE (Editor):
-            // - Marcar el PhotonView como *Scene Object* (para que lo posea el MasterClient).
-            // - En Observed Components agregar este Door.
-            // - Synchronization: Unreliable On Change.
             transform.localRotation = isOpen ? qOpen : qClose;
         }
 
         void Update()
         {
-            // Progreso normalizado según reloj de red
             float t = Mathf.Clamp01((float)((PhotonNetwork.Time - animStart) / duration));
             transform.localRotation = Quaternion.Slerp(startRot, targetRot, t);
         }
-
-        // Lado local: pedir toggle
+        
         public void Toggle() => TryToggle();
 
         public void TryToggle()
         {
-            // Anti-spam: no permitir spam durante anim
             if ((PhotonNetwork.Time - animStart) < duration * 0.25f) return;
 
             if (photonView.IsMine)
             {
-                // Owner aplica y SerializeView replica
                 ApplyOpenState(!isOpen, PhotonNetwork.Time, true);
             }
             else
             {
-                // Pedir al owner (MasterClient si es Scene Object)
                 photonView.RPC(nameof(RPC_RequestToggle), RpcTarget.MasterClient, PhotonNetwork.Time);
             }
         }
@@ -81,8 +68,7 @@ namespace DoorScript
         [PunRPC]
         void RPC_RequestToggle(double clientTime, PhotonMessageInfo info)
         {
-            if (!photonView.IsMine) return;                 // solo owner procesa
-            // (podrías validar distancia, permisos, cooldown, etc.)
+            if (!photonView.IsMine) return;
             ApplyOpenState(!isOpen, PhotonNetwork.Time, true);
         }
 
@@ -90,11 +76,10 @@ namespace DoorScript
         {
             isOpen     = open;
             animStart  = startTime;
-            startRot   = transform.localRotation;           // anim desde rot actual
+            startRot   = transform.localRotation;
             targetRot  = open ? qOpen : qClose;
-            seq++;                                          // nueva versión
-
-            // SFX: lo reproducen todos cuando apliquen esta versión (ver OnPhotonSerializeView Read)
+            seq++;
+            
             if (fromLocalOwner) PlaySfx(open);
         }
 
@@ -108,17 +93,15 @@ namespace DoorScript
                 asource.Play();
             }
         }
-
-        // ---------- Serialization View ----------
+        
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
-            if (stream.IsWriting) // ONLY owner
+            if (stream.IsWriting)
             {
                 stream.SendNext(isOpen);
                 stream.SendNext(animStart);
                 stream.SendNext(seq);
-                stream.SendNext(startRot);                  // snapshot de partida
-                // targetRot se deriva de isOpen (qOpen/qClose)
+                stream.SendNext(startRot);
             }
             else
             {
@@ -126,8 +109,7 @@ namespace DoorScript
                 double in_animStart= (double)stream.ReceiveNext();
                 int    in_seq      = (int)stream.ReceiveNext();
                 Quaternion in_start= (Quaternion)stream.ReceiveNext();
-
-                // Ordenar por versión (y por tiempo si hiciera falta)
+                
                 if (in_seq > lastAppliedSeq)
                 {
                     lastAppliedSeq = in_seq;
@@ -136,8 +118,7 @@ namespace DoorScript
                     animStart = in_animStart;
                     startRot  = in_start;
                     targetRot = isOpen ? qOpen : qClose;
-
-                    // SFX en TODOS al aplicar una nueva versión
+                    
                     PlaySfx(isOpen);
                 }
             }
