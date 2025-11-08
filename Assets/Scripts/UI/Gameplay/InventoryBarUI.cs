@@ -39,9 +39,12 @@ public class InventoryBarUI : MonoBehaviour
 
     private void Refresh()
     {
+        if (_inventory == null) return;
+
         if (slots.Length > 0 && slots[0] != null)
         {
-            slots[0].SetIcon(null);
+            var weapon = _inventory.GetSelectedGun;
+            slots[0].SetIcon(weapon ? weapon.Icon : null);
         }
         
         for (int uiIdx = 1; uiIdx < slots.Length; uiIdx++)

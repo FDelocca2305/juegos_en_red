@@ -796,7 +796,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   displayName: ScannerPistol
-  icon: {fileID: 21300000, guid: 78b736601df34e145b113200f637e37f, type: 3}
+  icon: {fileID: 21300000, guid: 6908cdf5b1685654b9c1a358e8d5d367, type: 3}
   viewModel: {fileID: 6615881869971423863}
   cooldown: 0.25
   maxUses: 2
@@ -859,7 +859,7 @@ MonoBehaviour:
   actualBullets: 1
   maxBullets: 1
   muzzleFlash: {fileID: 6273862086275109327}
-  icon: {fileID: 21300000, guid: 8d98ab6168c3e91439339f1908b8fe97, type: 3}
+  icon: {fileID: 21300000, guid: 664daca0287967847b569a3d89bcd2d8, type: 3}
 --- !u!1 &6615881870380280038
 GameObject:
   m_ObjectHideFlags: 0
@@ -911,7 +911,7 @@ MonoBehaviour:
   actualBullets: 4
   maxBullets: 4
   muzzleFlash: {fileID: 6273862086699665150}
-  icon: {fileID: 21300000, guid: 626b9cddb29049e4cac50cd87b419945, type: 3}
+  icon: {fileID: 21300000, guid: 664daca0287967847b569a3d89bcd2d8, type: 3}
 --- !u!1 &6615881870514185442
 GameObject:
   m_ObjectHideFlags: 0
@@ -959,7 +959,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   displayName: Objectives Paper
-  icon: {fileID: 21300000, guid: 144aa74618b85974a9a50f612c2fa8fd, type: 3}
+  icon: {fileID: 21300000, guid: 3aed0b8b18be18f4c92c6e3e83754f16, type: 3}
   viewModel: {fileID: 6615881870514185442}
   cooldown: 0.25
 --- !u!1 &6615881870542279991
@@ -1242,7 +1242,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   displayName: Radar
-  icon: {fileID: 21300000, guid: e5600378dd761e64d9423790c482bf36, type: 3}
+  icon: {fileID: 21300000, guid: fab0a5a7bed0e794eacd97a15038a976, type: 3}
   viewModel: {fileID: 6615881870815408414}
   cooldown: 0.25
   radius: 20
@@ -1297,7 +1297,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   displayName: Cuchillo
-  icon: {fileID: 21300000, guid: 65f0e363b74cf5845ab8c3fbc14f39ac, type: 3}
+  icon: {fileID: 21300000, guid: abda233de52748a4186b2e60377b62b7, type: 3}
   viewModel: {fileID: 6615881871016853859}
   cooldown: 0.25
   range: 2
