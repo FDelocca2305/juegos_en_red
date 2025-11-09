@@ -104,7 +104,7 @@ namespace Photon.Voice.Unity
             {
                 switch (level)
                 {
-                    case LogLevel.Error: Debug.LogErrorFormat(obj, fmt, args); break;
+                    case LogLevel.Error: Debug.LogFormat(obj, fmt, args); break;
                     case LogLevel.Warning: Debug.LogWarningFormat(obj, fmt, args); break;
                     default: Debug.LogFormat(obj, fmt, args); break;
                 }

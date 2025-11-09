@@ -12,16 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 182cd195a28310e479cddf7ff82822f8, type: 3}
   m_Name: LootLockerConfig
   m_EditorClassIdentifier: 
-  apiKey: 
-  adminToken: 
-  domainKey: 
+  apiKey: dev_a74ae341343f4a57a40378bb78a4df45
+  adminToken: f78904ed2ced7efbb6ca39eeca2de947db671cab
+  domainKey: nazzwnhs
   game_version: 1.0.0.0
-  sdk_version: 
+  sdk_version: 6.4.0
   url: https://api.lootlocker.com/v1
-  adminUrl: https://api.lootlocker.com/admin
-  playerUrl: https://api.lootlocker.com/player
-  userUrl: https://api.lootlocker.com/game
-  baseUrl: https://api.lootlocker.com
+  adminUrl: https://nazzwnhs.api.lootlocker.com/admin
+  playerUrl: https://nazzwnhs.api.lootlocker.com/player
+  userUrl: https://nazzwnhs.api.lootlocker.com/game
+  baseUrl: https://nazzwnhs.api.lootlocker.com
   clientSideRequestTimeOut: 180
   logLevel: 2
   logErrorsAsWarnings: 0

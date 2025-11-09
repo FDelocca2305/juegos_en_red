@@ -214,8 +214,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
                     gameStatusText.text = "Iniciando nueva ronda...";
             }
             
-            if (phase == RoomKeys.Phase_Lobby)
-                voiceManager.PrepareVoiceForLobby();
+            //if (phase == RoomKeys.Phase_Lobby)
+                //voiceManager.PrepareVoiceForLobby();
         }
         
         if (propertiesThatChanged.ContainsKey("rounds_played") || 
