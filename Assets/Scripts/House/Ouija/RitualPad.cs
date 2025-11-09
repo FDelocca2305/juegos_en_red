@@ -5,16 +5,23 @@ using UnityEngine;
 public class RitualPad : MonoBehaviourPun
 {
     [SerializeField] private int padIndex;
-    public Renderer symbolRenderer;
+    public GameObject symbolActivated;
 
-    void Awake(){ if (TryGetComponent(out Collider c)) c.isTrigger = true; }
+    void Awake()
+    {
+        if (TryGetComponent(out Collider c)) c.isTrigger = true;
+        if (symbolActivated)
+        {
+            symbolActivated.SetActive(false);
+        }
+    }
 
     void OnTriggerEnter(Collider other)
     {
         if (!other.TryGetComponent<PhotonView>(out var pv)) return;
         if (!pv.IsMine) return;
 
-        if (symbolRenderer) symbolRenderer.enabled = true;
+        if (symbolActivated) symbolActivated.SetActive(true);
         OuijaRitualManager.I?.LocalPadSet(true);
     }
 
@@ -23,7 +30,7 @@ public class RitualPad : MonoBehaviourPun
         if (!other.TryGetComponent<PhotonView>(out var pv)) return;
         if (!pv.IsMine) return;
 
-        if (symbolRenderer) symbolRenderer.enabled = false;
+        if (symbolActivated) symbolActivated.SetActive(false);
         OuijaRitualManager.I?.LocalPadSet(false);
     }
 }
