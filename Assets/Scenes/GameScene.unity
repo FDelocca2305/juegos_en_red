@@ -75219,10 +75219,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: On
       objectReference: {fileID: 0}
+    - target: {fileID: 837988107, guid: bff7d82400d21d149b7e3aad068ca751, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 40
+      objectReference: {fileID: 0}
     - target: {fileID: 837988108, guid: bff7d82400d21d149b7e3aad068ca751, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 309b1d5a294fd6c43ae9cf77656c1852, type: 3}
+      objectReference: {fileID: 21300000, guid: 24b11cd3d0e5eea42a487ae8c8a9e72e, type: 3}
     - target: {fileID: 9037667418174699989, guid: bff7d82400d21d149b7e3aad068ca751, type: 3}
       propertyPath: m_Name
       value: LightIcon
@@ -75340,8 +75344,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   icon: {fileID: 1917213050}
-  onSprite: {fileID: 21300000, guid: 309b1d5a294fd6c43ae9cf77656c1852, type: 3}
-  offSprite: {fileID: 21300000, guid: 5679a74364f6b4440ab7e7aed55cd95e, type: 3}
+  onSprite: {fileID: 21300000, guid: 24b11cd3d0e5eea42a487ae8c8a9e72e, type: 3}
+  offSprite: {fileID: 21300000, guid: 2ac513fbbd02dd24b908fff9c897a777, type: 3}
 --- !u!114 &1917213050 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 837988108, guid: bff7d82400d21d149b7e3aad068ca751, type: 3}
@@ -85883,6 +85887,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1437276682}
     m_Modifications:
+    - target: {fileID: 837988107, guid: bff7d82400d21d149b7e3aad068ca751, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 837988107, guid: bff7d82400d21d149b7e3aad068ca751, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 837988108, guid: bff7d82400d21d149b7e3aad068ca751, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: e0010ea1725358f40ab63aaf53b1af71, type: 3}
     - target: {fileID: 9037667418174699989, guid: bff7d82400d21d149b7e3aad068ca751, type: 3}
       propertyPath: m_Name
       value: FuseIcon
