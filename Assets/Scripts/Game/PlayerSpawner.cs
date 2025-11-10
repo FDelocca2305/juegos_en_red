@@ -71,6 +71,12 @@ public class PlayerSpawner : MonoBehaviour, IPlayerSpawner
 
         if (player) PhotonNetwork.Destroy(player);
         ServiceLocator.Resolve<IGameplayUI>().DeathScreenActivate = true;
-        FindObjectOfType<SpectatorController>(true)?.BeginSpectate();
+        
+        var spec = FindObjectOfType<SpectatorController>(true);
+        if (spec)
+        {
+            spec.gameObject.SetActive(true);
+            spec.BeginSpectate();
+        }
     }
 }

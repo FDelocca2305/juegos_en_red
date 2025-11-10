@@ -12,6 +12,7 @@ public class ConnectionErrorPopup : MonoBehaviour
 
     public void Show(string title, string body, System.Action onOk)
     {
+        Cursor.lockState = CursorLockMode.None;
         gameObject.SetActive(true);
         titleText.text = title;
         bodyText.text = body;

@@ -154,8 +154,7 @@ public class RoundManager : MonoBehaviourPunCallbacks, IRoundService
         room.IsOpen = true;
         room.IsVisible = true;
         room.SetCustomProperties(ht);
-
-        //PhotonNetwork.LoadLevel(lobbySceneName);
+        
     }
 
     

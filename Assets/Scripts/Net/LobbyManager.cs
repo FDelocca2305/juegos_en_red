@@ -37,6 +37,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     
     private void Start()
     {
+        Cursor.lockState = CursorLockMode.None;
+        
         InitializeLobby();
         SetupVoiceManager();
         LoadRoomStats();

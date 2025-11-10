@@ -64,6 +64,7 @@ public class PhotonConnectionGuard : MonoBehaviourPunCallbacks
 
         if (pauseGameOnPopup) Time.timeScale = 1f;
         _showing = false;
+        _popup.Hide();
         SceneManager.LoadScene(menuSceneName);
     }
     

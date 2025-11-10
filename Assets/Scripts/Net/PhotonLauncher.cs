@@ -16,8 +16,6 @@ public class PhotonLauncher : MonoBehaviourPunCallbacks, IPhotonLauncher
     [SerializeField] private TMP_InputField roomNameInput;
     [SerializeField] private GameObject roomScreen;
     [SerializeField] private TMP_Text roomName;
-    //[SerializeField] private GameObject errorScreen;
-    //[SerializeField] private TMP_Text errorText;
     [SerializeField] private GameObject roomBrowserScreen;
     [SerializeField] private RoomButton roomButton;
     [SerializeField] private TMP_Text playerNameLabel;
@@ -36,9 +34,10 @@ public class PhotonLauncher : MonoBehaviourPunCallbacks, IPhotonLauncher
     {
         if (PhotonNetwork.AuthValues == null || string.IsNullOrEmpty(PhotonNetwork.AuthValues.UserId))
             PhotonNetwork.AuthValues = new AuthenticationValues(System.Guid.NewGuid().ToString());
-
-
+        
         PhotonNetwork.AutomaticallySyncScene = true;
+        Application.runInBackground = true;
+        PhotonNetwork.KeepAliveInBackground = 60;
         
         if (SceneManager.GetActiveScene().name != "MenuScene")
         {
@@ -52,6 +51,7 @@ public class PhotonLauncher : MonoBehaviourPunCallbacks, IPhotonLauncher
         CloseMenus();
         loadingScreen.SetActive(true);
         loadingText.text = "Connecting To Network...";
+        Cursor.lockState = CursorLockMode.None;
         
         var state = PhotonNetwork.NetworkClientState;
 
