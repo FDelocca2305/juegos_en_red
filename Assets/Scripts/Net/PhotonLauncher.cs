@@ -16,8 +16,8 @@ public class PhotonLauncher : MonoBehaviourPunCallbacks, IPhotonLauncher
     [SerializeField] private TMP_InputField roomNameInput;
     [SerializeField] private GameObject roomScreen;
     [SerializeField] private TMP_Text roomName;
-    [SerializeField] private GameObject errorScreen;
-    [SerializeField] private TMP_Text errorText;
+    //[SerializeField] private GameObject errorScreen;
+    //[SerializeField] private TMP_Text errorText;
     [SerializeField] private GameObject roomBrowserScreen;
     [SerializeField] private RoomButton roomButton;
     [SerializeField] private TMP_Text playerNameLabel;
@@ -71,7 +71,7 @@ public class PhotonLauncher : MonoBehaviourPunCallbacks, IPhotonLauncher
         menuButtons.SetActive(false);
         createRoomScreen.SetActive(false);
         roomScreen.SetActive(false);
-        errorScreen.SetActive(false);
+        //errorScreen.SetActive(false);
         roomBrowserScreen.SetActive(false);
         nameInputScreen.SetActive(false);
         leaderboardScreen.SetActive(false);
@@ -166,12 +166,12 @@ public class PhotonLauncher : MonoBehaviourPunCallbacks, IPhotonLauncher
         PhotonNetwork.LoadLevel("LobbyScene");
     }
 
-    public override void OnCreateRoomFailed(short returnCode, string message)
-    {
-        errorText.text = "Failed To Create Room: " + message;
-        CloseMenus();
-        errorScreen.SetActive(true);
-    }
+    // public override void OnCreateRoomFailed(short returnCode, string message)
+    // {
+    //     errorText.text = "Failed To Create Room: " + message;
+    //     CloseMenus();
+    //     errorScreen.SetActive(true);
+    // }
 
     public void CloseErrorScreen()
     {

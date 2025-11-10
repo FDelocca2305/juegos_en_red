@@ -54,6 +54,19 @@ public class RoundManager : MonoBehaviourPunCallbacks, IRoundService
         else if (othersAlive == 0)
             photonView.RPC(nameof(RPC_EndRound), RpcTarget.All, "ASSASSIN", "All dead");
     }
+    
+    public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+        if (RoomKeys.GetPhase() != RoomKeys.Phase_Playing) return;
+        Evaluate();
+    }
+
+    public override void OnMasterClientSwitched(Photon.Realtime.Player newMasterClient)
+    {
+        if (RoomKeys.GetPhase() == RoomKeys.Phase_Playing)
+            Invoke(nameof(Evaluate), 0.2f);
+    }
 
     public override void OnJoinedRoom()
     {
