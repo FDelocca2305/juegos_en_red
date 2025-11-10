@@ -49,6 +49,6 @@ public class SpectatorController : MonoBehaviour
     private void SnapTo(Transform t)
     {
         if (_cam && t) _cam.transform.SetPositionAndRotation(t.position, t.rotation);
-        ServiceLocator.Resolve<UI.Gameplay.IGameplayUI>()?.ShowHint($"Q (prev) Spectating: {_idx+1}/{_targets.Count} E (next)", .6f);
+        ServiceLocator.Resolve<UI.Gameplay.IGameplayUI>()?.ShowHint($"Q (prev) Spectating: {_idx+1}/{_targets.Count} E (next)", 10f);
     }
 }

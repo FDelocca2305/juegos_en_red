@@ -7,6 +7,8 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class PlayerSpawner : MonoBehaviour, IPlayerSpawner
 {
     [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private GameObject canvasObjectives;
+    
     private GameObject player;
     private bool _spawned;
 
@@ -51,6 +53,7 @@ public class PlayerSpawner : MonoBehaviour, IPlayerSpawner
 
     public void Die(string damager)
     {
+        canvasObjectives.SetActive(false);
         ServiceLocator.Resolve<IGameplayUI>().DeathText = "You were killed by " + damager;
         AudioManager.Instance?.PlayLocalSound("player_death_local");
 
