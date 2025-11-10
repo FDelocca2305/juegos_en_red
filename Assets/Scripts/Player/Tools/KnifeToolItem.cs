@@ -9,12 +9,32 @@ public class KnifeToolItem : Player.BaseToolItem
     [SerializeField] private LayerMask playerMask;
 
     private Camera _cam;
+    private AudioManager _audioManager;
+    private PhotonView _photonView;
 
-    private void Awake() => _cam = Camera.main;
+    private void Awake()
+    {
+        _cam = Camera.main;
+        _audioManager = AudioManager.Instance;
+        _photonView = GetComponentInParent<PhotonView>();
+    }
+
+    public override void OnSelected()
+    {
+        base.OnSelected();
+
+        if (_photonView != null && !_photonView.IsMine) return;
+        _audioManager?.PlayLocalSound("equip_knife");
+    }
 
     public override void OnPrimaryActionDown()
     {
         if (!IsReady()) return;
+
+        if (_photonView == null || _photonView.IsMine)
+        {
+            _audioManager?.PlayLocalSound("knife_stab");
+        }
 
         var cam = _cam ? _cam : Camera.main;
         var origin = cam ? cam.transform.position : transform.position;

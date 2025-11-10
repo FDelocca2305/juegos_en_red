@@ -105,6 +105,10 @@ public class OuijaRitualManager : MonoBehaviourPunCallbacks
 
         double startTime = PhotonNetwork.Time + 1.0;
         Debug.Log("[Ouija] ritual START");
+        if (board != null)
+        {
+            AudioManager.Instance?.PlayNetworkSoundAtPosition("ouija_ritual", board.transform.position);
+        }
         board.photonView.RPC("RPC_StartRitual", RpcTarget.All, seq.ToArray(), startTime);
 
         _ready.Clear();

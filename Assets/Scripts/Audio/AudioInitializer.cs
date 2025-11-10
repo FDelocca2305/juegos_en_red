@@ -129,6 +129,30 @@ public class AudioInitializer : MonoBehaviour
             audioManager.AddAudioClip(deathClip);
         }
 
+        // Configurar sonidos locales de herramientas e interacciones
+        RegisterLocalSound(audioManager, audioConfig.knifeEquip, "equip_knife", audioConfig.sfxVolume);
+        RegisterLocalSound(audioManager, audioConfig.weaponEquip, "equip_weapon", audioConfig.sfxVolume);
+        RegisterLocalSound(audioManager, audioConfig.paperEquip, "equip_paper", audioConfig.sfxVolume);
+        RegisterLocalSound(audioManager, audioConfig.knifeStab, "knife_stab", audioConfig.sfxVolume);
+        RegisterLocalSound(audioManager, audioConfig.radarPing, "radar_ping", audioConfig.sfxVolume);
+        RegisterLocalSound(audioManager, audioConfig.detectiveObjectUse, "detective_object", audioConfig.sfxVolume);
+        RegisterLocalSound(audioManager, audioConfig.piecePickup, "piece_pickup", audioConfig.sfxVolume);
+        RegisterLocalSound(audioManager, audioConfig.candleLight, "candle_light", audioConfig.sfxVolume);
+        RegisterLocalSound(audioManager, audioConfig.playerDeathLocal, "player_death_local", audioConfig.sfxVolume);
+
+        if (audioConfig.ouijaRitual != null)
+        {
+            var ouijaClip = new AudioManager.AudioClipData
+            {
+                name = "ouija_ritual",
+                clip = audioConfig.ouijaRitual,
+                volume = audioConfig.sfxVolume,
+                is3D = true,
+                maxDistance = audioConfig.ritualMaxDistance
+            };
+            audioManager.AddAudioClip(ouijaClip);
+        }
+
         Debug.Log("AudioManager inicializado con configuración completa.");
     }
 
@@ -256,5 +280,23 @@ public class AudioInitializer : MonoBehaviour
         }
 
         Debug.Log("AudioManager inicializado con sonidos desde Resources.");
+    }
+
+    private void RegisterLocalSound(AudioManager audioManager, AudioClip clip, string soundName, float volume)
+    {
+        if (clip == null || audioManager == null || string.IsNullOrWhiteSpace(soundName))
+        {
+            return;
+        }
+
+        var clipData = new AudioManager.AudioClipData
+        {
+            name = soundName,
+            clip = clip,
+            volume = volume,
+            is3D = false,
+            maxDistance = 0f
+        };
+        audioManager.AddAudioClip(clipData);
     }
 }

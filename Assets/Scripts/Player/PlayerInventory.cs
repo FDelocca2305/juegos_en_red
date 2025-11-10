@@ -21,6 +21,9 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
     public event Action OnInventoryChanged;
     public event Action<int> OnSelectionChanged;
 
+    private AudioManager _audioManager;
+    private bool _selectionInitialized;
+
     public override void OnEnable()
     {
         if (photonView.IsMine)
@@ -35,6 +38,8 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
 
     private void Awake()
     {
+        _audioManager = AudioManager.Instance;
+
         tools.RemoveAll(t => t == null);
 
         if (weapon == null && selectedIndex == 0 && tools.Count > 0)
@@ -162,6 +167,9 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
 
     private void ApplySelectionVisuals(int previousIndex)
     {
+        bool selectionChanged = previousIndex != selectedIndex;
+        bool isWeaponSelectedNow = IsWeaponSelected;
+
         if (previousIndex > 0)
         {
             int prevToolIdx = previousIndex - 1;
@@ -173,9 +181,9 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
             }
         }
 
-        if (weapon) weapon.gameObject.SetActive(IsWeaponSelected);
+        if (weapon) weapon.gameObject.SetActive(isWeaponSelectedNow);
         
-        if (!IsWeaponSelected)
+        if (!isWeaponSelectedNow)
         {
             for (int i = 0; i < tools.Count; i++)
                 if (tools[i]) tools[i].gameObject.SetActive(false);
@@ -186,6 +194,13 @@ public class PlayerInventory : MonoBehaviourPunCallbacks, IPlayerInventory
 
             if (weapon) weapon.gameObject.SetActive(false);
         }
+
+        if (_selectionInitialized && selectionChanged && isWeaponSelectedNow && weapon != null && photonView.IsMine)
+        {
+            _audioManager?.PlayLocalSound("equip_weapon");
+        }
+
+        _selectionInitialized = true;
     }
 
     public void SetWeapon(BaseGun newWeapon)

@@ -19,12 +19,14 @@ public class DetectiveDetectorToolItem : BaseToolItem
     private Camera _cam;
     private IGameplayUI _ui;
     private PhotonView _ownerPv;
+    private AudioManager _audioManager;
 
     private void Awake()
     {
         _cam = Camera.main;
         _ownerPv = GetComponentInParent<PhotonView>();
         usesLeft = Mathf.Max(0, maxUses);
+        _audioManager = AudioManager.Instance;
     }
 
     private void Start()
@@ -41,6 +43,11 @@ public class DetectiveDetectorToolItem : BaseToolItem
             _ui?.ShowHint("Low battery", 0.9f);
             StartCooldown();
             return;
+        }
+
+        if (_ownerPv == null || _ownerPv.IsMine)
+        {
+            _audioManager?.PlayLocalSound("detective_object");
         }
 
         var cam = _cam ? _cam : Camera.main;

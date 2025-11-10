@@ -23061,7 +23061,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 38.35
+  m_fontSize: 44.55
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -37445,8 +37445,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1084508918}
-  - component: {fileID: 1084508917}
   - component: {fileID: 1084508919}
+  - component: {fileID: 1084508920}
+  - component: {fileID: 1084508921}
   m_Layer: 0
   m_Name: AudioManager
   m_TagString: Untagged
@@ -37454,43 +37455,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1084508917
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1084508916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8797e7fd75adfa74a8df1aeda7ff0604, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  audioClips:
-  - name: footstep_slow
-    clip: {fileID: 8300000, guid: 617e1c8612e8f1b4fb9b26665d1fab99, type: 3}
-    volume: 0.7
-    pitch: 1
-    is3D: 1
-    maxDistance: 12
-  - name: shot_pistol
-    clip: {fileID: 8300000, guid: 9b8cf30945ad85148b51c040f48adc21, type: 3}
-    volume: 0.7
-    pitch: 1
-    is3D: 1
-    maxDistance: 12
-  - name: impact_wall
-    clip: {fileID: 8300000, guid: e318489de3591be4496ac25c953f5747, type: 3}
-    volume: 0.7
-    pitch: 1
-    is3D: 1
-    maxDistance: 12
-  - name: footstep_fast
-    clip: {fileID: 8300000, guid: ac30a2276257d3246a10dadee5445c4a, type: 3}
-    volume: 0.7
-    pitch: 1
-    is3D: 1
-    maxDistance: 12
 --- !u!4 &1084508918
 Transform:
   m_ObjectHideFlags: 0
@@ -37528,6 +37492,32 @@ MonoBehaviour:
   sceneViewId: 51
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &1084508920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1084508916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d43ac57c1e4ffa42bde7cffafaf1c33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioConfig: {fileID: 11400000, guid: b4166c585fbecaa4fac2b926f84c5969, type: 2}
+--- !u!114 &1084508921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1084508916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8797e7fd75adfa74a8df1aeda7ff0604, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioClips: []
 --- !u!1 &1091290239
 GameObject:
   m_ObjectHideFlags: 0

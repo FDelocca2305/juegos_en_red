@@ -18,6 +18,20 @@ public class AudioConfig : ScriptableObject
     
     [Header("Other Sounds")]
     public AudioClip playerDeath;
+
+    [Header("Tool & Interaction Sounds")]
+    public AudioClip knifeEquip;
+    public AudioClip weaponEquip;
+    public AudioClip paperEquip;
+    public AudioClip knifeStab;
+    public AudioClip radarPing;
+    public AudioClip detectiveObjectUse;
+    public AudioClip piecePickup;
+    public AudioClip candleLight;
+    public AudioClip playerDeathLocal;
+
+    [Header("Ritual Sounds")]
+    public AudioClip ouijaRitual;
     
     [Header("Audio Settings")]
     [Range(0f, 1f)]
@@ -33,4 +47,5 @@ public class AudioConfig : ScriptableObject
     public float footstepMaxDistance = 12f;
     public float weaponMaxDistance = 20f;
     public float impactMaxDistance = 15f;
+    public float ritualMaxDistance = 18f;
 }

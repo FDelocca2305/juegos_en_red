@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using Player;
 using UI.Gameplay;
 using UnityEngine;
@@ -13,6 +14,14 @@ public class RadarToolItem : BaseToolItem
 
     private float _nextPing;
     private IGameplayUI _ui;
+    private PhotonView _photonView;
+    private AudioManager _audioManager;
+
+    private void Awake()
+    {
+        _photonView = GetComponentInParent<PhotonView>();
+        _audioManager = AudioManager.Instance;
+    }
 
     private void Start()
     {
@@ -33,6 +42,11 @@ public class RadarToolItem : BaseToolItem
             var root = c.transform.root;
             if (root == transform.root) continue;
             if (!targets.Contains(root)) targets.Add(root);
+        }
+
+        if (_photonView == null || _photonView.IsMine)
+        {
+            _audioManager?.PlayLocalSound("radar_ping");
         }
 
         if (_ui != null)

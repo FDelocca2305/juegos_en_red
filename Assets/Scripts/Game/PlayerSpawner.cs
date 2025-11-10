@@ -52,6 +52,7 @@ public class PlayerSpawner : MonoBehaviour, IPlayerSpawner
     public void Die(string damager)
     {
         ServiceLocator.Resolve<IGameplayUI>().DeathText = "You were killed by " + damager;
+        AudioManager.Instance?.PlayLocalSound("player_death_local");
 
         PhotonNetwork.LocalPlayer.SetCustomProperties(
             new ExitGames.Client.Photon.Hashtable { [RoomKeys.ALIVE] = false }

@@ -43,6 +43,7 @@ public class CandleInteractable : MonoBehaviourPun, IInteractable
     public void Interact(int? ownerActorNumber = null)
     {
         if (!CanInteract()) return;
+        AudioManager.Instance?.PlayLocalSound("candle_light");
         photonView.RPC(nameof(RPC_SetLit), RpcTarget.AllBuffered, true);
     }
 

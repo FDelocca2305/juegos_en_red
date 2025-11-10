@@ -21,6 +21,7 @@ public class PieceInteractable : MonoBehaviour, IInteractable
     {
         if (collected) return;
         collected = true;
+        AudioManager.Instance?.PlayLocalSound("piece_pickup");
         owner?.OnPieceCollected(objectiveIndex, displayName);
         Destroy(gameObject);
     }

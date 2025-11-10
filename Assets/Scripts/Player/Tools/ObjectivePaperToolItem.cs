@@ -1,3 +1,4 @@
+using Photon.Pun;
 using Player;
 using UI.Gameplay;
 using UnityEngine;
@@ -8,11 +9,16 @@ public class ObjectivePaperToolItem : BaseToolItem
     private IObjectivesTracker _tracker;
     private bool _visible;
     
+    private AudioManager _audioManager;
+    private PhotonView _photonView;
+    
     private void Awake()
     {
         ServiceLocator.TryResolve(out _ui);
         ServiceLocator.TryResolve(out _tracker);
         if (_tracker != null) _tracker.OnObjectivesChanged += Refresh;
+        _audioManager = AudioManager.Instance;
+        _photonView = GetComponentInParent<PhotonView>();
     }
     
     private void OnEnable()
@@ -37,6 +43,11 @@ public class ObjectivePaperToolItem : BaseToolItem
         base.OnSelected(); 
         _visible = true; 
         Refresh();
+
+        if (_photonView == null || _photonView.IsMine)
+        {
+            _audioManager?.PlayLocalSound("equip_paper");
+        }
     }
 
     public override void OnDeselected()
