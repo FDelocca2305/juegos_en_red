@@ -132,7 +132,7 @@ public class RoundManager : MonoBehaviourPunCallbacks, IRoundService
         
         RPC_ResetLocalPlayerProps();
         
-        Cursor.lockState = CursorLockMode.None;
+        //Cursor.lockState = CursorLockMode.None;
         
         if (PhotonNetwork.IsMasterClient)
             StartCoroutine(LoadLobbyAfter(endDelay));
