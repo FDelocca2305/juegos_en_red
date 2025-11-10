@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerUIController : MonoBehaviour, IPlayerUIController
 {
     [SerializeField] private TMP_Text ammoText;
     [SerializeField] private TMP_Text noAmmoText;
+    [SerializeField] private Image ammoIcon;
 
     private IPlayerShootController _shoot;
     private IPlayerInventory _inventory;
@@ -37,8 +39,21 @@ public class PlayerUIController : MonoBehaviour, IPlayerUIController
     public void SetAmmo(int current, int max)
     {
         if (!ammoText) return;
-        if (max <= 0) { ammoText.text = ""; if (noAmmoText) noAmmoText.gameObject.SetActive(false); return; }
-        ammoText.text = $"{current}/{max}";
+
+        bool hasAmmoInfo = max > 0;
+
+        if (!hasAmmoInfo)
+        {
+            ammoText.text = "";
+            if (noAmmoText) noAmmoText.gameObject.SetActive(false);
+        }
+        else
+        {
+            ammoText.text = $"{current}/{max}";
+        }
+
+        if (ammoIcon)
+            ammoIcon.gameObject.SetActive(hasAmmoInfo);
     }
 
     private void OnDestroy()
@@ -51,5 +66,10 @@ public class PlayerUIController : MonoBehaviour, IPlayerUIController
     }
 
     private void HandleAmmoChanged(int current, int max) => SetAmmo(current, max);
-    private void HandleNoAmmoMessage(int current, int max) => noAmmoText?.gameObject.SetActive(current <= 0);
+    private void HandleNoAmmoMessage(int current, int max)
+    {
+        if (!noAmmoText) return;
+        bool showNoAmmo = max > 0 && current <= 0;
+        noAmmoText.gameObject.SetActive(showNoAmmo);
+    }
 }
