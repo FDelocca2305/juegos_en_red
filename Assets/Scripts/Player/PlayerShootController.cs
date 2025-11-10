@@ -107,7 +107,7 @@ public class PlayerShootController : MonoBehaviourPunCallbacks, IPlayerShootCont
             var targetRole   = roleProvider != null ? roleProvider.Role : RoleId.Innocent;
             var myRole       = _roles?.LocalRole ?? RoleId.Innocent;
             
-            bool isOtherPlayer = targetView != null && targetView != photonView;
+            bool isOtherPlayer = targetView != null && targetView != photonView && targetView.gameObject.CompareTag("Player");
             
             bool doDamage = isOtherPlayer;
             bool badShot  = doDamage && myRole == RoleId.Detective && targetRole == RoleId.Innocent;
@@ -117,7 +117,6 @@ public class PlayerShootController : MonoBehaviourPunCallbacks, IPlayerShootCont
                 PhotonNetwork.Instantiate(playerImpact.name, hit.point, Quaternion.identity);
                 targetView.RPC(nameof(DealDamage), RpcTarget.All, photonView.Owner.NickName);
                 
-                // Reproducir sonido de impacto en jugador
                 if (_impactAudioController != null)
                 {
                     _impactAudioController.PlayPlayerImpact(hit.point);
@@ -132,7 +131,6 @@ public class PlayerShootController : MonoBehaviourPunCallbacks, IPlayerShootCont
                 );
                 Destroy(bulletImpactObject, bulletImpactLifetime);
                 
-                // Reproducir sonido de impacto en pared
                 if (_impactAudioController != null)
                 {
                     _impactAudioController.PlayWallImpact(hit.point);
@@ -147,7 +145,6 @@ public class PlayerShootController : MonoBehaviourPunCallbacks, IPlayerShootCont
         gun.MuzzleFlash.SetActive(true);
         _muzzleCounter = muzzleDisplayTime;
         
-        // Reproducir sonido de disparo
         PlayShootSound(gun);
     }
 
@@ -198,10 +195,9 @@ public class PlayerShootController : MonoBehaviourPunCallbacks, IPlayerShootCont
     private void PlayShootSound(BaseGun gun)
     {
         if (_audioManager == null || gun == null) return;
-
-        // Determinar el tipo de arma y reproducir el sonido correspondiente
+        
         string gunType = gun.name.ToLower();
-        string soundName = "shot_pistol"; // Default
+        string soundName = "shot_pistol";
 
         if (gunType.Contains("rifle"))
         {
@@ -215,8 +211,7 @@ public class PlayerShootController : MonoBehaviourPunCallbacks, IPlayerShootCont
         {
             soundName = "shot_pistol";
         }
-
-        // Reproducir sonido de red para que otros jugadores lo escuchen
+        
         _audioManager.PlayNetworkSoundAtPosition(soundName, transform.position);
     }
 }
