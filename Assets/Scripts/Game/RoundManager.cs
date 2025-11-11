@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 using ExitGames.Client.Photon;
+using LootLocker;
+using LootLocker.Requests;
 using Photon.Pun;
 using UnityEngine;
 
@@ -103,13 +105,12 @@ public class RoundManager : MonoBehaviourPunCallbacks, IRoundService
                 stats["assassin_wins"] = (int)(room.CustomProperties?["assassin_wins"] ?? 0) + 1;
             else if (winner == "INNOCENTS")
                 stats["innocent_wins"] = (int)(room.CustomProperties?["innocent_wins"] ?? 0) + 1;
-
-            //Leaderboard score only assasin
+            
             if (winner == "ASSASSIN" && !string.IsNullOrEmpty(assassinLeaderboardKey))
             {
                 if (LootLockerBootsStrap.SessionStarted)
                 {
-                    LeaderboardService.SubmitScore(assassinWinScore, assassinLeaderboardKey);
+                    LeaderboardService.IncrementScore(assassinWinScore, assassinLeaderboardKey);
                 }
                 else
                 {
@@ -120,19 +121,17 @@ public class RoundManager : MonoBehaviourPunCallbacks, IRoundService
             {
                 if (LootLockerBootsStrap.SessionStarted)
                 {
-                    LeaderboardService.SubmitScore(innocentWinScore, innocentLeaderboardKey);
+                    LeaderboardService.IncrementScore(assassinWinScore, assassinLeaderboardKey);
                 }
                 else
                 {
-                    StartCoroutine(SubmitAssassinWinWhenReady());
+                    StartCoroutine(SubmitInnocentsWinWhenReady());
                 }
             }
             room.SetCustomProperties(stats);
         }
         
         RPC_ResetLocalPlayerProps();
-        
-        //Cursor.lockState = CursorLockMode.None;
         
         if (PhotonNetwork.IsMasterClient)
             StartCoroutine(LoadLobbyAfter(endDelay));
@@ -167,11 +166,19 @@ public class RoundManager : MonoBehaviourPunCallbacks, IRoundService
         PhotonNetwork.LocalPlayer.SetCustomProperties(ht);
     }
 
-        private System.Collections.IEnumerator SubmitAssassinWinWhenReady()
+    private System.Collections.IEnumerator SubmitAssassinWinWhenReady()
+     {
+         while (!LootLockerBootsStrap.SessionStarted)
+             yield return null;
+ 
+         LeaderboardService.IncrementScore(assassinWinScore, assassinLeaderboardKey);
+     }
+    
+    private System.Collections.IEnumerator SubmitInnocentsWinWhenReady()
     {
         while (!LootLockerBootsStrap.SessionStarted)
             yield return null;
 
-        LeaderboardService.SubmitScore(assassinWinScore, assassinLeaderboardKey);
+        LeaderboardService.IncrementScore(assassinWinScore, assassinLeaderboardKey);
     }
 }

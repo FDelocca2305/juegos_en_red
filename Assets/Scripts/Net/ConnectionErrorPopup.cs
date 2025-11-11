@@ -1,5 +1,4 @@
-﻿// Assets/_Project/Net/Photon/ConnectionErrorPopup.cs
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 

@@ -23,6 +23,33 @@ public class LeaderboardService : MonoBehaviour
 
         });
     }
+    
+    public static void IncrementScore(int delta, string leaderboardKey, Action<bool> onDone = null)
+    {
+        LootLockerSDKManager.IncrementScore("", delta, leaderboardKey, response =>
+        {
+            if (response.success)
+            {
+                Debug.Log($"[LL] Increment OK (+{delta}) on {leaderboardKey}. New score: {response.score}");
+                onDone?.Invoke(true);
+                return;
+            }
+            
+            Debug.LogWarning($"[LL] Increment failed on {leaderboardKey}. Fallback to SubmitScore. Error: {response.errorData?.message}");
+            LootLockerSDKManager.SubmitScore("", delta, leaderboardKey, submitResp =>
+            {
+                if (!submitResp.success)
+                {
+                    Debug.LogError($"[LL] Submit fallback failed on {leaderboardKey}: {submitResp.errorData?.message}");
+                    onDone?.Invoke(false);
+                    return;
+                }
+
+                Debug.Log($"[LL] Submit fallback OK ({delta}) on {leaderboardKey}");
+                onDone?.Invoke(true);
+            });
+        });
+    }
 
     public static void GetLeaderboardScore(string leaderboardKey, int count, Action<string> changeText)
     {

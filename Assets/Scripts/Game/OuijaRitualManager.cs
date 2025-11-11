@@ -13,7 +13,7 @@ public class OuijaRitualManager : MonoBehaviourPunCallbacks
     [Header("Config")]
     [SerializeField] private int minParticipants = 2;
     [SerializeField] private int maxParticipants = 5;
-    [SerializeField] private float lockDelay    = 2.0f;
+    [SerializeField] private float lockDelay = 2.0f;
 
     [Header("Refs")]
     [SerializeField] private OuijaBoardController board;

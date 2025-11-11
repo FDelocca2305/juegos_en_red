@@ -8,6 +8,9 @@ public class LootLockerBootsStrap : MonoBehaviour
 {
     public static bool SessionStarted { get; private set; }
     [SerializeField] string playerIdentifier = "1";
+
+    public string Identifier { get; set; }
+    
     void Awake()
     {
         DontDestroyOnLoad(gameObject);
@@ -16,7 +19,8 @@ public class LootLockerBootsStrap : MonoBehaviour
 
     private void StartGuest()
     {
-        LootLockerSDKManager.StartGuestSession(UnityEngine.Random.Range(1f, 999f).ToString(), response =>
+        Identifier = UnityEngine.Random.Range(1f, 999f).ToString();
+        LootLockerSDKManager.StartGuestSession(Identifier, response =>
         {
             if (!response.success)
             {
@@ -25,6 +29,7 @@ public class LootLockerBootsStrap : MonoBehaviour
                 Debug.LogError(response.errorData.code);
                 return;
             }
+            
             SessionStarted = true;
             Debug.Log("Connected");
         } );

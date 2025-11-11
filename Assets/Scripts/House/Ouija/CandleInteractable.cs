@@ -14,7 +14,6 @@ public class CandleInteractable : MonoBehaviourPun, IInteractable
     void Awake()
     {
         var col = GetComponent<Collider>();
-        //col.isTrigger = true;
         if (fireModel) fireModel.SetActive(IsLit);
     }
 
